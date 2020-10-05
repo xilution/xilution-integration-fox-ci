@@ -13,25 +13,25 @@ data "aws_lambda_function" "metrics-reporter-lambda" {
 # Metrics
 
 resource "aws_lambda_permission" "allow-fox-cloudwatch-every-ten-minute-event-rule" {
-  action = "lambda:InvokeFunction"
+  action        = "lambda:InvokeFunction"
   function_name = data.aws_lambda_function.metrics-reporter-lambda.function_name
-  principal = "events.amazonaws.com"
-  source_arn = aws_cloudwatch_event_rule.fox-cloudwatch-every-ten-minute-event-rule.arn
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.fox-cloudwatch-every-ten-minute-event-rule.arn
 }
 
 resource "aws_cloudwatch_event_rule" "fox-cloudwatch-every-ten-minute-event-rule" {
-  name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-cloudwatch-event-rule"
+  name                = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-cloudwatch-event-rule"
   schedule_expression = "rate(10 minutes)"
-  role_arn = data.aws_iam_role.cloudwatch-events-rule-invocation-role.arn
+  role_arn            = data.aws_iam_role.cloudwatch-events-rule-invocation-role.arn
   tags = {
     xilution_organization_id = var.organization_id
-    originator = "xilution.com"
+    originator               = "xilution.com"
   }
 }
 
 resource "aws_cloudwatch_event_target" "fox-cloudwatch-event-target" {
-  rule = aws_cloudwatch_event_rule.fox-cloudwatch-every-ten-minute-event-rule.name
-  arn = data.aws_lambda_function.metrics-reporter-lambda.arn
+  rule  = aws_cloudwatch_event_rule.fox-cloudwatch-every-ten-minute-event-rule.name
+  arn   = data.aws_lambda_function.metrics-reporter-lambda.arn
   input = <<-DOC
   {
     "Environment": "prod",
