@@ -8,8 +8,6 @@ data "aws_lambda_function" "metrics-reporter-lambda" {
   function_name = "xilution-client-metrics-reporter-lambda"
 }
 
-# Integration Resources Here...
-
 # Metrics
 
 resource "aws_lambda_permission" "allow-fox-cloudwatch-every-ten-minute-event-rule" {

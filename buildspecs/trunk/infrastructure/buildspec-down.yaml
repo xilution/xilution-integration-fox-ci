@@ -12,13 +12,14 @@ phases:
       - export AWS_SESSION_TOKEN=`cat aws-creds.json | jq -r '.Credentials.SessionToken'`
       - |
         terraform init \
-          -backend-config="key=xilution-basics-fox/$FOX_PIPELINE_ID/terraform.tfstate" \
+          -backend-config="key=xilution-integration-fox/$FOX_PIPELINE_ID/terraform.tfstate" \
           -backend-config="bucket=xilution-terraform-backend-state-bucket-$CLIENT_AWS_ACCOUNT" \
-          -backend-config="dynamodb_table=xilution-terraform-backend-lock-table"
+          -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
+          ./terraform/trunk
   build:
     commands:
       - |
-        terraform apply \
+        terraform destroy \
           -var="organization_id=$XILUTION_ORGANIZATION_ID" \
           -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
           -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
@@ -27,4 +28,5 @@ phases:
           -var="xilution_aws_region=$XILUTION_AWS_REGION" \
           -var="xilution_environment=$XILUTION_ENVIRONMENT" \
           -var="xilution_pipeline_type=$PIPELINE_TYPE" \
-          -auto-approve
+          -auto-approve \
+          ./terraform/trunk
