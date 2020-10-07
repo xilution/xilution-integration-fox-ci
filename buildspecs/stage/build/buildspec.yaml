@@ -6,4 +6,10 @@ phases:
       nodejs: 12
   build:
     commands:
-      - echo building
+      - |
+        ./scripts/build.sh \
+          $STAGE_NAME \
+          $CODEBUILD_SRC_DIR_SourceCode
+artifacts:
+  files:
+    - dist.zip

@@ -6,4 +6,6 @@ phases:
       nodejs: 12
   build:
     commands:
-      - echo verifying
+      - |
+        ./scripts/verify.sh \
+          $CODEBUILD_SRC_DIR_SourceCode
