@@ -1,17 +1,57 @@
-#!/bin/bash
+#!/bin/bash -ex
 
-buildOutputDir=${1}
-pipelineId=${2}
-stageName=${3}
+. ./scripts/common_functions.sh
 
-cd "${buildOutputDir}" || false
-mkdir ./temp
-mv ./artifacts.zip ./temp
-cd ./temp || false
-unzip artifacts.zip
-rm -rf artifacts.zip
-unzip dist.zip
-rm -rf dist.zip
+sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
+currentDir=$(pwd)
+
+cd "$sourceDir" || false
+
+pipelineId=${FOX_PIPELINE_ID}
+buildNumber=${CODEBUILD_BUILD_NUMBER}
+stackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
+sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
+stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-bucket="s3://xilution-coyote-${pipelineId:0:8}-${stageNameLower}-web-content"
-aws s3 cp . "${bucket}" --recursive --include "*" --acl public-read
+layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
+layerZipFileName="${buildNumber}-layer.zip"
+
+
+echo "Getting the API ID"
+query=".Stacks[0].Outputs | map(select(.ExportName == \"${stackName}-api\")) | .[] .OutputValue"
+describeStacksResponse=$(aws cloudformation describe-stacks --stack-name "${stackName}")
+apiId=$(echo "${describeStacksResponse}" | jq -r "${query}")
+echo "The API ID is: ${apiId}"
+
+echo "Releasing the API"
+aws apigatewayv2 create-deployment \
+  --api-id "${apiId}" \
+  --stage-name "${stageNameLower}"
+
+echo "Creating a new layer"
+publishLayerVersionResponse=$(aws lambda publish-layer-version --layer-name "${layerName}" --content "S3Bucket=${sourceBucket},S3Key=${layerZipFileName}")
+echo "${publishLayerVersionResponse}"
+layerVersionArn=$(echo "${publishLayerVersionResponse}" | jq -r ".LayerVersionArn")
+echo "New layer version arn is: ${layerVersionArn}"
+
+endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
+
+for endpoint in ${endpoints}; do
+
+  endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
+  functionName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-${endpointId}-lambda"
+  functionZipFileName="${buildNumber}-function.zip"
+
+  echo "Updating the lambda to use the new layer"
+  aws lambda update-function-configuration \
+    --function-name "${functionName}" \
+    --layers "${layerVersionArn}"
+
+  echo "Updating the lambda function code"
+  aws lambda update-function-code \
+    --function-name "${functionName}" \
+    --s3-bucket "${sourceBucket}" \
+    --s3-key "${functionZipFileName}"
+done
+
+echo "All Done!"

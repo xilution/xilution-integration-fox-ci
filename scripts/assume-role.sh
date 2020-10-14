@@ -1,10 +1,17 @@
-#!/bin/bash
+#!/bin/bash -ex
 
-awsAccountId=${1}
-awsRole=${2}
+awsAccountId=${CLIENT_AWS_ACCOUNT}
+awsRole=xilution-developer-role
+
+echo "awsAccountId = ${awsAccountId}"
+echo "awsRole = ${awsRole}"
+
+roleArn="arn:aws:iam::${awsAccountId}:role/${awsRole}"
+
+echo "roleArn = ${roleArn}"
 
 aws sts assume-role \
-  --role-arn arn:aws:iam::"${awsAccountId}":role/"${awsRole}" \
+  --role-arn "${roleArn}" \
   --role-session-name xilution-client-session >./aws-creds.json
 
 awsAccessKeyId=$(cat <./aws-creds.json | jq -r ".Credentials.AccessKeyId")

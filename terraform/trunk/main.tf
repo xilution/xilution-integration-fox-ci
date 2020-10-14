@@ -22,7 +22,6 @@ resource "aws_cloudwatch_event_rule" "fox-cloudwatch-every-ten-minute-event-rule
   schedule_expression = "rate(10 minutes)"
   role_arn            = data.aws_iam_role.cloudwatch-events-rule-invocation-role.arn
   tags = {
-    xilution_organization_id = var.organization_id
     originator               = "xilution.com"
   }
 }

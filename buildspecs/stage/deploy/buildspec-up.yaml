@@ -3,19 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - |
-        . ./scripts/assume-role.sh \
-          $CLIENT_AWS_ACCOUNT \
-          xilution-developer-role \
-      - |
-        . ./scripts/terraform-init-stage.sh \
-          $CLIENT_AWS_ACCOUNT \
-          $FOX_PIPELINE_ID \
-          $STAGE_NAME
+      - . ./scripts/assume-role.sh
   build:
     commands:
-      - |
-        ./scripts/deploy-up.sh \
-          $CODEBUILD_SRC_DIR_BuildOutput \
-          $COYOTE_PIPELINE_ID \
-          $STAGE_NAME
+      - ./scripts/deploy-up.sh

@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  PipelineId:
+    Type: String
+  StageName:
+    Type: String
+  BuildNumber:
+    Type: String
+  Runtime:
+    Type: String
+  TrunkStackName:
+    Type: String
+
+Resources:
+  LambdaLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      LayerName: !Sub "xilution-fox-${PipelineId}-${StageName}-lambda-layer"
+      CompatibleRuntimes:
+        - !Ref Runtime
+      Content:
+        S3Bucket:
+          Fn::ImportValue: !Sub "${TrunkStackName}-source-bucket"
+        S3Key: !Sub "${BuildNumber}-layer.zip"
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: !Ref StageName
+      ApiId:
+        Fn::ImportValue: !Sub "${TrunkStackName}-api"
+
+Outputs:
+  LambdaLayer:
+    Value: !Ref LambdaLayer
+    Export:
+      Name: !Sub "${AWS::StackName}-lambda-layer"

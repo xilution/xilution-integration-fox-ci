@@ -1,26 +1,44 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 . ./scripts/common_functions.sh
 
-stageName=${1}
-sourceDir=${2}
+pipelineId=${FOX_PIPELINE_ID}
+sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
+sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
+buildNumber=${CODEBUILD_BUILD_NUMBER}
 
-currentDir=$(pwd)
+echo "sourceDir = ${sourceDir}"
+echo "sourceVersion = ${sourceVersion}"
+echo "buildNumber = ${buildNumber}"
+
 cd "${sourceDir}" || false
 
-commands=$(jq -r ".builds?.${stageName}?.commands[]? | @base64" <./xilution.json)
-execute_commands "${commands}"
-
-distDir=$(jq -r ".builds?.distDir?" <./xilution.json)
-
-if [[ "${distDir}" == "null" ]]; then
-  echo "Unable to find distribution directory."
+buildDir=$(jq -r ".build.buildDir" <./xilution.json)
+if [[ "${buildDir}" == "null" ]]; then
+  echo "Unable to find build directory."
   exit 1
 fi
 
-cd "${distDir}" || false
+commands=$(jq -r ".build.commands[] | @base64" <./xilution.json)
+execute_commands "${commands}"
 
-zip -r ../dist.zip .
-mv ../dist.zip "${currentDir}"
+functionZipFileName="${buildNumber}-function.zip"
+cd "${buildDir}" || false
+zip -r "${sourceDir}/${functionZipFileName}" .
+cd "${sourceDir}" || false
 
-cd "${currentDir}" || false
+aws s3 cp "./${functionZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
+
+layerDir=$(jq -r ".layer.layerDir" <./xilution.json)
+if [[ "${layerDir}" == "null" ]]; then
+  echo "Unable to find layer directory."
+  exit 1
+fi
+
+commands=$(jq -r ".layer.commands[] | @base64" <./xilution.json)
+execute_commands "${commands}"
+
+layerZipFileName="${buildNumber}-layer.zip"
+zip -r "${sourceDir}/${layerZipFileName}" "${layerDir}"
+
+aws s3 cp "./${layerZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
