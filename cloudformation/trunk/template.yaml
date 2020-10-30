@@ -46,3 +46,7 @@ Outputs:
     Value: !Ref Api
     Export:
       Name: !Sub "${AWS::StackName}-api"
+  ApiBaseUrl:
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com"
+    Export:
+      Name: !Sub "${AWS::StackName}-api-base-url"
