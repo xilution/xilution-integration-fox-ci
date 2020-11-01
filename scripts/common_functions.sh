@@ -33,31 +33,36 @@ create_or_update_cloudformation_stack() {
     uuid=$(uuidgen)
     changeSetName="xilution-fox-${pipelineId:0:8}-${uuid:0:8}-change-set"
     aws cloudformation create-change-set \
+      --change-set-type UPDATE \
       --stack-name "${stackName}" \
       --change-set-name "${changeSetName}" \
       --parameters "${parameters}" \
       --template-body "${templateBody}"
-    echo "Waiting for create stack change set to complete."
-    aws cloudformation wait change-set-create-complete \
-      --stack-name "${stackName}" \
-      --change-set-name "${changeSetName}"
-    echo "Create stack change set is complete."
-    changeSet=$(aws cloudformation describe-change-set --stack-name "${stackName}" --change-set-name "${changeSetName}")
-    changesQuery=".Changes[]"
-    changes=$(echo "${changeSet}" | jq -r "${changesQuery}")
-    if [[ -n "${changes}" ]]; then
-      echo "The following changes were found."
-      echo "${changes}"
-      echo "Applying them now..."
-      aws cloudformation execute-change-set \
+    sleep 5
+    changeSetStatus=$(aws cloudformation describe-change-set --stack-name "${stackName}" --change-set-name "${changeSetName}" | jq -r ".Status")
+    if [[ "${changeSetStatus}" != "FAILED" ]]; then
+      echo "Waiting for create stack change set to complete."
+      aws cloudformation wait change-set-create-complete \
         --stack-name "${stackName}" \
         --change-set-name "${changeSetName}"
-      echo "Waiting for stack changes to be applied."
-      aws cloudformation wait stack-update-complete \
-        --stack-name "${stackName}"
-      echo "Applying stack changes is complete"
+      echo "Create stack change set is complete."
+      changes=$(aws cloudformation describe-change-set --stack-name "${stackName}" --change-set-name "${changeSetName}" | jq -r ".Changes[]")
+      if [[ -n "${changes}" ]]; then
+        echo "The following changes were found."
+        echo "${changes}"
+        echo "Applying them now..."
+        aws cloudformation execute-change-set \
+          --stack-name "${stackName}" \
+          --change-set-name "${changeSetName}"
+        echo "Waiting for stack changes to be applied."
+        aws cloudformation wait stack-update-complete \
+          --stack-name "${stackName}"
+        echo "Applying stack changes is complete"
+      else
+        echo "No changes found. Nothing to do."
+      fi
     else
-      echo "No changes found. Nothing to do."
+      echo "Create change set failed. Nothing to do."
     fi
   fi
 }
