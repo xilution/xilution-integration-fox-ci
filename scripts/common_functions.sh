@@ -74,3 +74,12 @@ delete_cloudformation_stack() {
     --stack-name "${stackName}"
   echo "Stack delete is complete."
 }
+
+execute_commands() {
+
+  commands=${1}
+
+  for command in ${commands}; do
+    echo "${command}" | base64 --decode | bash
+  done
+}
