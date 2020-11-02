@@ -6,8 +6,6 @@ pipelineId=${FOX_PIPELINE_ID}
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 sourceVersion=${COMMIT_ID}
 
-env
-
 echo "pipelineId = ${pipelineId}"
 echo "sourceDir = ${sourceDir}"
 echo "sourceVersion = ${sourceVersion}"
