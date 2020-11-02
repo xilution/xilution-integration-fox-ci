@@ -13,7 +13,7 @@ stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 stageStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-stack"
 runtime=$(jq -r ".runtime" <./xilution.json)
-sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
+sourceVersion=${COMMIT_ID}
 parameters="[
   {
     \"ParameterKey\":\"PipelineId\",

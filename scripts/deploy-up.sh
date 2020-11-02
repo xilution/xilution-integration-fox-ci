@@ -8,7 +8,7 @@ currentDir=$(pwd)
 cd "$sourceDir" || false
 
 pipelineId=${FOX_PIPELINE_ID}
-sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
+sourceVersion=${COMMIT_ID}
 stackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
 sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
 stageName=${STAGE_NAME}
