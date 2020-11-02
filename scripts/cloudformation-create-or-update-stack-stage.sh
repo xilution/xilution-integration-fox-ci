@@ -13,7 +13,7 @@ stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 stageStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-stack"
 runtime=$(jq -r ".runtime" <./xilution.json)
-buildNumber=${CODEBUILD_BUILD_NUMBER}
+sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
 parameters="[
   {
     \"ParameterKey\":\"PipelineId\",
@@ -24,8 +24,8 @@ parameters="[
     \"ParameterValue\":\"${stageNameLower}\"
   },
   {
-    \"ParameterKey\":\"BuildNumber\",
-    \"ParameterValue\":\"${buildNumber}\"
+    \"ParameterKey\":\"SourceVersion\",
+    \"ParameterValue\":\"${sourceVersion}\"
   },
   {
     \"ParameterKey\":\"Runtime\",
@@ -68,8 +68,8 @@ for endpoint in ${endpoints}; do
       \"ParameterValue\":\"${endpointId}\"
     },
     {
-      \"ParameterKey\":\"BuildNumber\",
-      \"ParameterValue\":\"${buildNumber}\"
+      \"ParameterKey\":\"SourceVersion\",
+      \"ParameterValue\":\"${sourceVersion}\"
     },
     {
       \"ParameterKey\":\"Handler\",

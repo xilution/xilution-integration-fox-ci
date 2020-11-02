@@ -7,7 +7,7 @@ Parameters:
     Type: String
   EndpointId:
     Type: String
-  BuildNumber:
+  SourceVersion:
     Type: String
   Handler:
     Type: String
@@ -30,7 +30,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::ImportValue: !Sub "${TrunkStackName}-source-bucket"
-        S3Key: !Sub "${BuildNumber}-function.zip"
+        S3Key: !Sub "${SourceVersion}-function.zip"
       Layers:
         - Fn::ImportValue: !Sub "${StageStackName}-lambda-layer"
       Handler: !Ref Handler

@@ -5,11 +5,11 @@
 pipelineId=${FOX_PIPELINE_ID}
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
-buildNumber=${CODEBUILD_BUILD_NUMBER}
+sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
 
 echo "sourceDir = ${sourceDir}"
 echo "sourceVersion = ${sourceVersion}"
-echo "buildNumber = ${buildNumber}"
+echo "sourceVersion = ${sourceVersion}"
 
 cd "${sourceDir}" || false
 
@@ -22,7 +22,7 @@ fi
 commands=$(jq -r ".build.commands[] | @base64" <./xilution.json)
 execute_commands "${commands}"
 
-functionZipFileName="${buildNumber}-function.zip"
+functionZipFileName="${sourceVersion}-function.zip"
 cd "${buildDir}" || false
 zip -r "${sourceDir}/${functionZipFileName}" .
 cd "${sourceDir}" || false
@@ -38,7 +38,7 @@ fi
 commands=$(jq -r ".layer.commands[] | @base64" <./xilution.json)
 execute_commands "${commands}"
 
-layerZipFileName="${buildNumber}-layer.zip"
+layerZipFileName="${sourceVersion}-layer.zip"
 zip -r "${sourceDir}/${layerZipFileName}" "${layerDir}"
 
 aws s3 cp "./${layerZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"

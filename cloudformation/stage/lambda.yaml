@@ -5,7 +5,7 @@ Parameters:
     Type: String
   StageName:
     Type: String
-  BuildNumber:
+  SourceVersion:
     Type: String
   Runtime:
     Type: String
@@ -22,7 +22,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::ImportValue: !Sub "${TrunkStackName}-source-bucket"
-        S3Key: !Sub "${BuildNumber}-layer.zip"
+        S3Key: !Sub "${SourceVersion}-layer.zip"
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:

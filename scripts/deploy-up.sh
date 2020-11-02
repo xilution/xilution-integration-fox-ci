@@ -8,13 +8,13 @@ currentDir=$(pwd)
 cd "$sourceDir" || false
 
 pipelineId=${FOX_PIPELINE_ID}
-buildNumber=${CODEBUILD_BUILD_NUMBER}
+sourceVersion=${CODEBUILD_SOURCE_VERSION_SourceCode}
 stackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
 sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
-layerZipFileName="${buildNumber}-layer.zip"
+layerZipFileName="${sourceVersion}-layer.zip"
 
 
 echo "Getting the API ID"
@@ -40,7 +40,7 @@ for endpoint in ${endpoints}; do
 
   endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
   functionName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-${endpointId}-lambda"
-  functionZipFileName="${buildNumber}-function.zip"
+  functionZipFileName="${sourceVersion}-function.zip"
 
   echo "Updating the lambda to use the new layer"
   aws lambda update-function-configuration \
