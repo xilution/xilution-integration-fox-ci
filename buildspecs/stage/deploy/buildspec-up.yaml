@@ -1,5 +1,9 @@
 version: 0.2
 
+env:
+  exported-variables:
+    - API_BASE_URL
+
 phases:
   pre_build:
     commands:
@@ -7,3 +11,4 @@ phases:
   build:
     commands:
       - ./scripts/deploy-up.sh
+      - . ./scripts/export-api-base-url.sh
