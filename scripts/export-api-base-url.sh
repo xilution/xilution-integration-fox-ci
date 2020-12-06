@@ -9,3 +9,5 @@ jq_query=".Stacks[0].Outputs | map(select(.ExportName == \"${trunkStackName}-api
 api_base_url=$(aws cloudformation describe-stacks --stack-name "${trunkStackName}" | jq -r "${jq_query}")
 
 export API_BASE_URL="${api_base_url}/${stageNameLower}"
+
+echo "All Done!"

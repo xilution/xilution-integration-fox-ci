@@ -21,3 +21,7 @@ for endpoint in ${endpoints}; do
 done
 
 delete_cloudformation_stack "${stageStackName}"
+
+cd "${currentDir}" || false
+
+echo "All Done!"

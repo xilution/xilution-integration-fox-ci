@@ -10,3 +10,5 @@ terraform plan \
   -var="xilution_environment=$XILUTION_ENVIRONMENT" \
   -var="xilution_pipeline_type=$PIPELINE_TYPE" \
   ./terraform/trunk
+
+echo "All Done!"

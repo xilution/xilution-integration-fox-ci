@@ -8,3 +8,5 @@ terraform init \
   -backend-config="bucket=xilution-terraform-backend-state-bucket-${awsAccountId}" \
   -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
   ./terraform/trunk
+
+echo "All Done!"

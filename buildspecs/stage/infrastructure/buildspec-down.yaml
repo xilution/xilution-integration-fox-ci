@@ -7,3 +7,4 @@ phases:
   build:
     commands:
       - ./scripts/cloudformation-delete-stack-stage.sh
+      - ./scripts/additional-infrastructure-down-stage.sh

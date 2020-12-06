@@ -18,3 +18,5 @@ for testDetail in ${testDetails}; do
   commands=$(echo "${testDetail}" | base64 --decode | jq -r ".commands[]? | @base64")
   execute_commands "${commands}"
 done
+
+echo "All Done!"

@@ -102,3 +102,5 @@ for endpoint in ${endpoints}; do
 
   create_or_update_cloudformation_stack "${pipelineId}" "${endpointStackName}" "${parameters}" "${templateBody}"
 done
+
+echo "All Done!"

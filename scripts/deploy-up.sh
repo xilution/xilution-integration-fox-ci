@@ -16,7 +16,6 @@ stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
 layerZipFileName="${sourceVersion}-layer.zip"
 
-
 echo "Getting the API ID"
 query=".Stacks[0].Outputs | map(select(.ExportName == \"${stackName}-api\")) | .[] .OutputValue"
 describeStacksResponse=$(aws cloudformation describe-stacks --stack-name "${stackName}")
@@ -53,5 +52,7 @@ for endpoint in ${endpoints}; do
     --s3-bucket "${sourceBucket}" \
     --s3-key "${functionZipFileName}"
 done
+
+cd "${currentDir}" || false
 
 echo "All Done!"

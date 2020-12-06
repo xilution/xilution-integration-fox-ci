@@ -10,3 +10,4 @@ phases:
       - ./scripts/terraform-plan-trunk.sh
       - ./scripts/terraform-apply-trunk.sh
       - ./scripts/cloudformation-create-or-update-stack-trunk.sh
+      - ./scripts/additional-infrastructure-up-trunk.sh

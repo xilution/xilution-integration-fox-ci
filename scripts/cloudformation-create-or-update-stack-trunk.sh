@@ -20,3 +20,5 @@ templateBody="file://./cloudformation/trunk/template.yaml"
 cd "${currentDir}" || false
 
 create_or_update_cloudformation_stack "${pipelineId}" "${stackName}" "${parameters}" "${templateBody}"
+
+echo "All Done!"

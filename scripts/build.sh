@@ -41,3 +41,5 @@ layerZipFileName="${sourceVersion}-layer.zip"
 zip -r "${sourceDir}/${layerZipFileName}" "${layerDir}"
 
 aws s3 cp "./${layerZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
+
+echo "All Done!"

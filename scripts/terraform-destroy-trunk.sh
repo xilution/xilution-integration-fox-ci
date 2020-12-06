@@ -11,3 +11,5 @@ terraform destroy \
   -var="xilution_pipeline_type=$PIPELINE_TYPE" \
   -auto-approve \
   ./terraform/trunk
+
+echo "All Done!"

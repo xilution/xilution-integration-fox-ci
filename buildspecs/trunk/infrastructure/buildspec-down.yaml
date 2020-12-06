@@ -10,3 +10,4 @@ phases:
       - ./scripts/terraform-destroy-trunk.sh
       - ./scripts/delete-fox-source-bucket-contents.sh
       - ./scripts/cloudformation-delete-stack-trunk.sh
+      - ./scripts/additional-infrastructure-down-trunk.sh
