@@ -12,6 +12,7 @@ trunkStackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 stageStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-stack"
+handler=$(jq -r ".handler" <./xilution.json)
 runtime=$(jq -r ".runtime" <./xilution.json)
 sourceVersion=${COMMIT_ID}
 parameters="[
@@ -26,6 +27,10 @@ parameters="[
   {
     \"ParameterKey\":\"SourceVersion\",
     \"ParameterValue\":\"${sourceVersion}\"
+  },
+  {
+    \"ParameterKey\":\"Handler\",
+    \"ParameterValue\":\"${handler}\"
   },
   {
     \"ParameterKey\":\"Runtime\",
@@ -52,7 +57,6 @@ for endpoint in ${endpoints}; do
   method=$(echo "${endpoint}" | base64 --decode | jq -r ".method")
   methodUpper=$(echo "${method}" | tr '[:lower:]' '[:upper:]')
   path=$(echo "${endpoint}" | base64 --decode | jq -r ".path")
-  handler=$(echo "${endpoint}" | base64 --decode | jq -r ".function.handler")
   endpointStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-${endpointId}-stack"
   parameters="[
     {
@@ -70,14 +74,6 @@ for endpoint in ${endpoints}; do
     {
       \"ParameterKey\":\"SourceVersion\",
       \"ParameterValue\":\"${sourceVersion}\"
-    },
-    {
-      \"ParameterKey\":\"Handler\",
-      \"ParameterValue\":\"${handler}\"
-    },
-    {
-      \"ParameterKey\":\"Runtime\",
-      \"ParameterValue\":\"${runtime}\"
     },
     {
       \"ParameterKey\":\"Method\",
