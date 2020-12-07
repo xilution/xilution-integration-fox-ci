@@ -8,7 +8,7 @@ terraformModuleDir=$(jq -r ".additionalInfrastructure?.trunk?.terraformModuleDir
 
 echo "terraformModuleDir = ${terraformModuleDir}"
 
-if [[ -n "${terraformModuleDir}" ]]; then
+if [[ "${terraformModuleDir}" != "null" ]]; then
   terraform plan \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
     -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
