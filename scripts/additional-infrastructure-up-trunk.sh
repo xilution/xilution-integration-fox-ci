@@ -9,6 +9,12 @@ terraformModuleDir=$(jq -r ".additionalInfrastructure?.trunk?.terraformModuleDir
 echo "terraformModuleDir = ${terraformModuleDir}"
 
 if [[ "${terraformModuleDir}" != "null" ]]; then
+  terraform init \
+    -backend-config="key=xilution-integration-fox/${FOX_PIPELINE_ID}/terraform.tfstate" \
+    -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
+    -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
+    "${terraformModuleDir}"
+
   terraform plan \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
     -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
