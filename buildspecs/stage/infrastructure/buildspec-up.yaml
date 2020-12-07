@@ -4,6 +4,7 @@ phases:
   pre_build:
     commands:
       - . ./scripts/assume-role.sh
+      - ./scripts/terraform-init-stage.sh
   build:
     commands:
       - ./scripts/cloudformation-create-or-update-stack-stage.sh
