@@ -4,6 +4,7 @@ phases:
   pre_build:
     commands:
       - . ./scripts/assume-role.sh
+      - ./scripts/terraform-init-trunk.sh
   build:
     commands:
       - ./scripts/terraform-plan-trunk.sh
