@@ -28,7 +28,7 @@ Resources:
   Lambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "xilution-fox-${PipelineId}-${StageName}-${EndpointId}-lambda"
+      FunctionName: !Sub "xilution-fox-${PipelineId}-${StageName}-lambda"
       Code:
         S3Bucket:
           Fn::ImportValue: !Sub "${TrunkStackName}-source-bucket"
