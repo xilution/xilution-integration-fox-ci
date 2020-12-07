@@ -55,7 +55,7 @@ create_or_update_cloudformation_stack() {
       --change-set-name "${changeSetName}" \
       --parameters "${parameters}" \
       --template-body "${templateBody}"
-    sleep 5
+    sleep 1
     changeSetStatus=$(aws cloudformation describe-change-set --stack-name "${stackName}" --change-set-name "${changeSetName}" | jq -r ".Status")
     if [[ "${changeSetStatus}" != "FAILED" ]]; then
       echo "Waiting for create stack change set to complete."
