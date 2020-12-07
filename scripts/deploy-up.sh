@@ -33,25 +33,19 @@ echo "${publishLayerVersionResponse}"
 layerVersionArn=$(echo "${publishLayerVersionResponse}" | jq -r ".LayerVersionArn")
 echo "New layer version arn is: ${layerVersionArn}"
 
-endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
+functionName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda"
+functionZipFileName="${sourceVersion}-function.zip"
 
-for endpoint in ${endpoints}; do
+echo "Updating the lambda to use the new layer"
+aws lambda update-function-configuration \
+  --function-name "${functionName}" \
+  --layers "${layerVersionArn}"
 
-  endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
-  functionName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-${endpointId}-lambda"
-  functionZipFileName="${sourceVersion}-function.zip"
-
-  echo "Updating the lambda to use the new layer"
-  aws lambda update-function-configuration \
-    --function-name "${functionName}" \
-    --layers "${layerVersionArn}"
-
-  echo "Updating the lambda function code"
-  aws lambda update-function-code \
-    --function-name "${functionName}" \
-    --s3-bucket "${sourceBucket}" \
-    --s3-key "${functionZipFileName}"
-done
+echo "Updating the lambda function code"
+aws lambda update-function-code \
+  --function-name "${functionName}" \
+  --s3-bucket "${sourceBucket}" \
+  --s3-key "${functionZipFileName}"
 
 cd "${currentDir}" || false
 
