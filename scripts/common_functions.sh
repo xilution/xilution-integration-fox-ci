@@ -54,6 +54,7 @@ create_or_update_cloudformation_stack() {
       --stack-name "${stackName}" \
       --change-set-name "${changeSetName}" \
       --parameters "${parameters}" \
+      --capabilities CAPABILITY_NAMED_IAM \
       --template-body "${templateBody}"
     sleep 1
     changeSetStatus=$(aws cloudformation describe-change-set --stack-name "${stackName}" --change-set-name "${changeSetName}" | jq -r ".Status")
