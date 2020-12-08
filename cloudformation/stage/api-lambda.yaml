@@ -15,6 +15,13 @@ Parameters:
     Type: String
 
 Resources:
+  Api:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub "xilution-fox-${PipelineId}-${StageName}-api"
+      ProtocolType: HTTP
+      Tags:
+        originator: "xilution.com"
   LambdaLayer:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -57,13 +64,13 @@ Resources:
           - ':'
           - !Ref 'AWS::AccountId'
           - ':'
-          - Fn::ImportValue: !Sub "${TrunkStackName}-api"
+          - !Ref Api
           - '/*/*'
   Integration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
       ApiId:
-        Fn::ImportValue: !Sub "${TrunkStackName}-api"
+        Fn::ImportValue: !Ref Api
       IntegrationType: AWS_PROXY
       IntegrationMethod: POST
       IntegrationUri: !Join
@@ -79,14 +86,12 @@ Resources:
           - '/invocations'
       ConnectionType: INTERNET
       PayloadFormatVersion: 2.0
-  Stage:
-    Type: AWS::ApiGatewayV2::Stage
-    Properties:
-      StageName: !Ref StageName
-      ApiId:
-        Fn::ImportValue: !Sub "${TrunkStackName}-api"
 
 Outputs:
+  ApiBaseUrl:
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com"
+    Export:
+      Name: !Sub "${AWS::StackName}-api-base-url"
   Integration:
     Value: !Ref Integration
     Export:

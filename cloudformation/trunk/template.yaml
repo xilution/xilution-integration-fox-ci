@@ -24,13 +24,6 @@ Resources:
               - 'sts:AssumeRole'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-  Api:
-    Type: AWS::ApiGatewayV2::Api
-    Properties:
-      Name: !Sub "xilution-fox-${PipelineId}-api"
-      ProtocolType: HTTP
-      Tags:
-        originator: "xilution.com"
 
 Outputs:
   SourceBucket:
@@ -44,11 +37,3 @@ Outputs:
         - Arn
     Export:
       Name: !Sub "${AWS::StackName}-lambda-role-arn"
-  Api:
-    Value: !Ref Api
-    Export:
-      Name: !Sub "${AWS::StackName}-api"
-  ApiBaseUrl:
-    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com"
-    Export:
-      Name: !Sub "${AWS::StackName}-api-base-url"

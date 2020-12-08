@@ -11,7 +11,7 @@ pipelineId=${FOX_PIPELINE_ID}
 trunkStackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-stageStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-stack"
+apiLambdaStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-api-lambda-stack"
 handler=$(jq -r ".handler" <./xilution.json)
 runtime=$(jq -r ".runtime" <./xilution.json)
 sourceVersion=${COMMIT_ID}
@@ -41,11 +41,11 @@ parameters="[
     \"ParameterValue\":\"${trunkStackName}\"
   }
 ]"
-templateBody="file://./cloudformation/stage/lambda.yaml"
+templateBody="file://./cloudformation/stage/api-lambda.yaml"
 
 cd "${currentDir}" || false
 
-create_or_update_cloudformation_stack "${pipelineId}" "${stageStackName}" "${parameters}" "${templateBody}"
+create_or_update_cloudformation_stack "${pipelineId}" "${apiLambdaStackName}" "${parameters}" "${templateBody}"
 
 cd "$sourceDir" || false
 
@@ -57,24 +57,8 @@ for endpoint in ${endpoints}; do
   method=$(echo "${endpoint}" | base64 --decode | jq -r ".method")
   methodUpper=$(echo "${method}" | tr '[:lower:]' '[:upper:]')
   path=$(echo "${endpoint}" | base64 --decode | jq -r ".path")
-  endpointStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-${endpointId}-stack"
+  routeStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-endpoint-${endpointId}-route-stack"
   parameters="[
-    {
-      \"ParameterKey\":\"PipelineId\",
-      \"ParameterValue\":\"${pipelineId:0:8}\"
-    },
-    {
-      \"ParameterKey\":\"StageName\",
-      \"ParameterValue\":\"${stageNameLower}\"
-    },
-    {
-      \"ParameterKey\":\"EndpointId\",
-      \"ParameterValue\":\"${endpointId}\"
-    },
-    {
-      \"ParameterKey\":\"SourceVersion\",
-      \"ParameterValue\":\"${sourceVersion}\"
-    },
     {
       \"ParameterKey\":\"Method\",
       \"ParameterValue\":\"${methodUpper}\"
@@ -84,19 +68,15 @@ for endpoint in ${endpoints}; do
       \"ParameterValue\":\"${path}\"
     },
     {
-      \"ParameterKey\":\"TrunkStackName\",
-      \"ParameterValue\":\"${trunkStackName}\"
-    },
-    {
-      \"ParameterKey\":\"StageStackName\",
-      \"ParameterValue\":\"${stageStackName}\"
+      \"ParameterKey\":\"ApiLambdaStackName\",
+      \"ParameterValue\":\"${apiLambdaStackName}\"
     }
   ]"
-  templateBody="file://./cloudformation/stage/api.yaml"
+  templateBody="file://./cloudformation/stage/route.yaml"
 
   cd "${currentDir}" || false
 
-  create_or_update_cloudformation_stack "${pipelineId}" "${endpointStackName}" "${parameters}" "${templateBody}"
+  create_or_update_cloudformation_stack "${pipelineId}" "${routeStackName}" "${parameters}" "${templateBody}"
 done
 
 echo "All Done!"

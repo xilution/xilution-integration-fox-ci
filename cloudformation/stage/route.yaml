@@ -1,21 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
-  PipelineId:
-    Type: String
-  StageName:
-    Type: String
-  EndpointId:
-    Type: String
-  SourceVersion:
-    Type: String
   Method:
     Type: String
   Path:
     Type: String
-  TrunkStackName:
-    Type: String
-  StageStackName:
+  ApiLambdaStackName:
     Type: String
 
 Resources:
@@ -23,9 +13,9 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId:
-        Fn::ImportValue: !Sub "${TrunkStackName}-api"
+        Fn::ImportValue: !Sub "${ApiLambdaStackName}-api"
       RouteKey: !Sub "${Method} ${Path}"
       Target: !Join
         - /
         - - integrations
-          - Fn::ImportValue: !Sub "${StageStackName}-integration"
+          - Fn::ImportValue: !Sub "${ApiLambdaStackName}-integration"
