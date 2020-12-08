@@ -86,6 +86,13 @@ Resources:
           - '/invocations'
       ConnectionType: INTERNET
       PayloadFormatVersion: 2.0
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: "$default"
+      ApiId: !Ref Api
+      StageVariables:
+        stage: !Ref StageName
 
 Outputs:
   ApiBaseUrl:
