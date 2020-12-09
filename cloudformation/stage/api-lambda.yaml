@@ -69,8 +69,7 @@ Resources:
   Integration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
-      ApiId:
-        Fn::ImportValue: !Ref Api
+      ApiId: !Ref Api
       IntegrationType: AWS_PROXY
       IntegrationMethod: POST
       IntegrationUri: !Join
