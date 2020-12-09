@@ -79,8 +79,10 @@ Resources:
           - ':apigateway:'
           - !Ref 'AWS::Region'
           - ':lambda:path/2015-03-31/functions/'
-          - !Ref Lambda
-          - /invocations
+          - Fn::GetAtt:
+              - Lambda
+              - Arn
+          - '/invocations'
       ConnectionType: INTERNET
       PayloadFormatVersion: 2.0
   Stage:
