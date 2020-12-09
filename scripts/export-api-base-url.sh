@@ -1,13 +1,13 @@
 #!/bin/bash -ex
 
 pipelineId=${FOX_PIPELINE_ID}
-trunkStackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
+apiLambdaStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-api-lambda-stack"
 
-jq_query=".Stacks[0].Outputs | map(select(.ExportName == \"${trunkStackName}-api-base-url\")) | .[] .OutputValue"
-api_base_url=$(aws cloudformation describe-stacks --stack-name "${trunkStackName}" | jq -r "${jq_query}")
+query=".Stacks[0].Outputs | map(select(.ExportName == \"${apiLambdaStackName}-api-base-url\")) | .[] .OutputValue"
+api_base_url=$(aws cloudformation describe-stacks --stack-name "${apiLambdaStackName}" | jq -r "${query}")
 
-export API_BASE_URL="${api_base_url}/${stageNameLower}"
+export API_BASE_URL="${api_base_url}"
 
 echo "All Done!"
