@@ -24,8 +24,7 @@ echo "The API ID is: ${apiId}"
 
 echo "Releasing the API"
 aws apigatewayv2 create-deployment \
-  --api-id "${apiId}" \
-  --stage-name "${stageNameLower}"
+  --api-id "${apiId}"
 
 echo "Creating a new layer"
 publishLayerVersionResponse=$(aws lambda publish-layer-version --layer-name "${layerName}" --content "S3Bucket=${sourceBucket},S3Key=${layerZipFileName}")
