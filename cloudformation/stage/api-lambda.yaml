@@ -90,6 +90,7 @@ Resources:
     Properties:
       StageName: "$default"
       ApiId: !Ref Api
+      AutoDeploy: true
       StageVariables:
         stage: !Ref StageName
 

@@ -11,20 +11,9 @@ pipelineId=${FOX_PIPELINE_ID}
 sourceVersion=${COMMIT_ID}
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-apiLambdaStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-api-lambda-stack"
 sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
 layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
 layerZipFileName="${sourceVersion}-layer.zip"
-
-echo "Getting the API ID"
-query=".Stacks[0].Outputs | map(select(.ExportName == \"${apiLambdaStackName}-api\")) | .[] .OutputValue"
-describeStacksResponse=$(aws cloudformation describe-stacks --stack-name "${apiLambdaStackName}")
-apiId=$(echo "${describeStacksResponse}" | jq -r "${query}")
-echo "The API ID is: ${apiId}"
-
-echo "Releasing the API"
-aws apigatewayv2 create-deployment \
-  --api-id "${apiId}"
 
 echo "Creating a new layer"
 publishLayerVersionResponse=$(aws lambda publish-layer-version --layer-name "${layerName}" --content "S3Bucket=${sourceBucket},S3Key=${layerZipFileName}")
