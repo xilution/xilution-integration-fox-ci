@@ -20,6 +20,12 @@ Resources:
     Properties:
       Name: !Sub "xilution-fox-${PipelineId}-${StageName}-api"
       ProtocolType: HTTP
+      CorsConfiguration:
+        AllowHeaders:
+          - "content-type"
+          - "authorization"
+        AllowOrigins:
+          - "*"
       Tags:
         originator: "xilution.com"
   LambdaLayer:

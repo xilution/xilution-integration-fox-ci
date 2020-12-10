@@ -92,10 +92,6 @@ delete_cloudformation_stack() {
   echo "Deleting stack ${stackName}"
   aws cloudformation delete-stack \
     --stack-name "${stackName}"
-  echo "Waiting for stack delete to complete."
-  aws cloudformation wait stack-delete-complete \
-    --stack-name "${stackName}"
-  echo "Stack delete is complete."
 }
 
 execute_commands() {
