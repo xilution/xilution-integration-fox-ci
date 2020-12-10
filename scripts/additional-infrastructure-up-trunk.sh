@@ -4,7 +4,6 @@ sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 currentDir=$(pwd)
 cd "${sourceDir}" || false
 terraformModuleDir=$(jq -r ".additionalInfrastructure?.trunk?.terraformModuleDir" <./xilution.json)
-cd "${currentDir}" || false
 
 echo "terraformModuleDir = ${terraformModuleDir}"
 

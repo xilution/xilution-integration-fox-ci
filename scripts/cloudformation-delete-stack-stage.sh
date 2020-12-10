@@ -4,13 +4,13 @@
 
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 currentDir=$(pwd)
-
 cd "$sourceDir" || false
+endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
+cd "${currentDir}" || false
 
 pipelineId=${FOX_PIPELINE_ID}
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
 
 for endpoint in ${endpoints}; do
 
@@ -22,7 +22,5 @@ done
 apiLambdaStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-api-lambda-stack"
 
 delete_cloudformation_stack "${apiLambdaStackName}"
-
-cd "${currentDir}" || false
 
 echo "All Done!"
