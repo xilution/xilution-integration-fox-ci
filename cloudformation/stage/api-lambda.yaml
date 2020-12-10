@@ -22,9 +22,12 @@ Resources:
       ProtocolType: HTTP
       CorsConfiguration:
         AllowHeaders:
-          - "content-type"
-          - "authorization"
+          - "Content-Type"
+          - "Authorization"
+          - "Location"
         AllowOrigins:
+          - "*"
+        AllowMethods:
           - "*"
       Tags:
         originator: "xilution.com"
