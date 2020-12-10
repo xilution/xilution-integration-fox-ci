@@ -15,7 +15,7 @@ stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 for endpoint in ${endpoints}; do
 
   endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
-  routeStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-${endpointId}-stack"
+  routeStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-endpoint-${endpointId}-route-stack"
   delete_cloudformation_stack "${routeStackName}"
 done
 
