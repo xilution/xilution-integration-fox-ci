@@ -25,6 +25,8 @@ Resources:
           - "Content-Type"
           - "Authorization"
           - "Location"
+        ExposeHeaders:
+          - "Location"
         AllowOrigins:
           - "*"
         AllowMethods:
