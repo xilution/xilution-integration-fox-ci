@@ -1,10 +1,10 @@
 #!/bin/bash -ex
 
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
-
-cd "$sourceDir" || false
-
+currentDir=$(pwd)
+cd "${sourceDir}" || false
 terraformModuleDir=$(jq -r ".additionalInfrastructure?.stage?.terraformModuleDir" <./xilution.json)
+cd "${currentDir}" || false
 
 echo "terraformModuleDir = ${terraformModuleDir}"
 
@@ -30,7 +30,5 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
 else
   echo "terraformModuleDir not found."
 fi
-
-cd "${currentDir}" || false
 
 echo "All Done!"

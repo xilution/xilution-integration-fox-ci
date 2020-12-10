@@ -4,16 +4,17 @@
 
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 currentDir=$(pwd)
-
-cd "$sourceDir" || false
+cd "${sourceDir}" || false
+handler=$(jq -r ".handler" <./xilution.json)
+runtime=$(jq -r ".runtime" <./xilution.json)
+endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
+cd "${currentDir}" || false
 
 pipelineId=${FOX_PIPELINE_ID}
 trunkStackName="xilution-fox-${pipelineId:0:8}-trunk-stack"
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 apiLambdaStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-api-lambda-stack"
-handler=$(jq -r ".handler" <./xilution.json)
-runtime=$(jq -r ".runtime" <./xilution.json)
 sourceVersion=${COMMIT_ID}
 parameters="[
   {
@@ -43,20 +44,14 @@ parameters="[
 ]"
 templateBody="file://./cloudformation/stage/api-lambda.yaml"
 
-cd "${currentDir}" || false
-
 create_or_update_cloudformation_stack "${pipelineId}" "${apiLambdaStackName}" "${parameters}" "${templateBody}"
-
-cd "$sourceDir" || false
-
-endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
 
 for endpoint in ${endpoints}; do
 
-  endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
   method=$(echo "${endpoint}" | base64 --decode | jq -r ".method")
   methodUpper=$(echo "${method}" | tr '[:lower:]' '[:upper:]')
   path=$(echo "${endpoint}" | base64 --decode | jq -r ".path")
+  endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
   routeStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-endpoint-${endpointId}-route-stack"
   parameters="[
     {
@@ -73,8 +68,6 @@ for endpoint in ${endpoints}; do
     }
   ]"
   templateBody="file://./cloudformation/stage/route.yaml"
-
-  cd "${currentDir}" || false
 
   create_or_update_cloudformation_stack "${pipelineId}" "${routeStackName}" "${parameters}" "${templateBody}"
 done
