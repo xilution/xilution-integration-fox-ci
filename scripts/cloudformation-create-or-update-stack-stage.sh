@@ -46,30 +46,4 @@ templateBody="file://./cloudformation/stage/api-lambda.yaml"
 
 create_or_update_cloudformation_stack "${pipelineId}" "${apiLambdaStackName}" "${parameters}" "${templateBody}"
 
-for endpoint in ${endpoints}; do
-
-  method=$(echo "${endpoint}" | base64 --decode | jq -r ".method")
-  methodUpper=$(echo "${method}" | tr '[:lower:]' '[:upper:]')
-  path=$(echo "${endpoint}" | base64 --decode | jq -r ".path")
-  endpointId=$(echo "${endpoint}" | base64 --decode | jq -r ".id")
-  routeStackName="xilution-fox-${pipelineId:0:8}-stage-${stageNameLower}-endpoint-${endpointId}-route-stack"
-  parameters="[
-    {
-      \"ParameterKey\":\"Method\",
-      \"ParameterValue\":\"${methodUpper}\"
-    },
-    {
-      \"ParameterKey\":\"Path\",
-      \"ParameterValue\":\"${path}\"
-    },
-    {
-      \"ParameterKey\":\"ApiLambdaStackName\",
-      \"ParameterValue\":\"${apiLambdaStackName}\"
-    }
-  ]"
-  templateBody="file://./cloudformation/stage/route.yaml"
-
-  create_or_update_cloudformation_stack "${pipelineId}" "${routeStackName}" "${parameters}" "${templateBody}"
-done
-
 echo "All Done!"

@@ -7,7 +7,7 @@ phases:
       - ./scripts/terraform-init-trunk.sh
   build:
     commands:
+      - ./scripts/additional-infrastructure-down-trunk.sh
+      - ./scripts/cloudformation-delete-stack-trunk.sh
       - ./scripts/terraform-destroy-trunk.sh
       - ./scripts/delete-fox-source-bucket-contents.sh
-      - ./scripts/cloudformation-delete-stack-trunk.sh
-      - ./scripts/additional-infrastructure-down-trunk.sh

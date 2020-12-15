@@ -4,7 +4,9 @@ phases:
   pre_build:
     commands:
       - . ./scripts/assume-role.sh
+      - ./scripts/terraform-init-trunk.sh
   build:
     commands:
-      - ./scripts/cloudformation-delete-stack-stage.sh
       - ./scripts/additional-infrastructure-down-stage.sh
+      - ./scripts/terraform-destroy-stage.sh
+      - ./scripts/cloudformation-delete-stack-stage.sh
