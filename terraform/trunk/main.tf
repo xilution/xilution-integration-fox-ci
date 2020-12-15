@@ -9,7 +9,7 @@ data "aws_lambda_function" "metrics-reporter-lambda" {
 # Source Bucket
 
 resource "aws_s3_bucket" "fox-source-bucket" {
-  bucket = "xilution-fox-${var.fox_pipeline_id}-source-code"
+  bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
   tags = {
     originator = "xilution.com"
   }
@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "fox-source-bucket" {
 # Lambda Role
 
 resource "aws_iam_role" "fox-lambda-role" {
-  name               = "xilution-fox-${var.fox_pipeline_id}-lambda-role"
+  name               = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -39,13 +39,13 @@ EOF
 }
 
 resource "aws_iam_policy_attachment" "fox-lambda-role-basic-execution-policy" {
-  name       = "xilution-fox-${var.fox_pipeline_id}-lambda-role-basic-execution-policy"
+  name       = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role-basic-execution-policy"
   roles      = [aws_iam_role.fox-lambda-role.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_policy_attachment" "fox-lambda-role-dynamo-access" {
-  name       = "xilution-fox-${var.fox_pipeline_id}-lambda-role-dynamo-access"
+  name       = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role-dynamo-access"
   roles      = [aws_iam_role.fox-lambda-role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
