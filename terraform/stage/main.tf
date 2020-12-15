@@ -11,7 +11,7 @@ data "aws_iam_role" "fox-lambda-role" {
 # API
 
 resource "aws_apigatewayv2_api" "fox_api" {
-  name          = "xilution-fox-${var.fox_pipeline_id}-${StageName}-api"
+  name          = "xilution-fox-${var.fox_pipeline_id}-${var.stage_name}-api"
   protocol_type = "HTTP"
   cors_configuration {
     allow_headers  = ["Content-Type", "Authorization", "Location"]
