@@ -40,7 +40,7 @@ echo routeKeys = ${routeKeys}
 terraform apply \
   -var="client_aws_account=${CLIENT_AWS_ACCOUNT}" \
   -var="api_id=${apiId}" \
-  -var="route_keys=${routeKeys}" \
+  -var="route_keys=[${routeKeys}]" \
   -var="target=${target}" \
   -auto-approve \
   ./terraform/stage
