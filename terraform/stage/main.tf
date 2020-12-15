@@ -29,7 +29,7 @@ resource "aws_apigatewayv2_api" "fox_api" {
 resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
   layer_name          = "xilution-fox-${var.fox_pipeline_id}-${var.stage_name}-lambda-layer"
   compatible_runtimes = [var.lambda_runtime]
-  s3_bucket           = data.aws_s3_bucket.fox-source-bucket
+  s3_bucket           = data.aws_s3_bucket.fox-source-bucket.id
   s3_key              = "${var.source_version}-layer.zip"
 }
 
@@ -37,7 +37,7 @@ resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
 
 resource "aws_lambda_function" "fox_lambda_function" {
   function_name = "xilution-fox-${var.fox_pipeline_id}-${var.stage_name}-lambda"
-  s3_bucket     = data.aws_s3_bucket.fox-source-bucket
+  s3_bucket     = data.aws_s3_bucket.fox-source-bucket.id
   s3_key        = "${var.source_version}-function.zip"
   layers        = [aws_lambda_layer_version.fox_lambda_layer_version.arn]
   handler       = var.lambda_handler
