@@ -40,7 +40,7 @@ if [[ "${direction}" == "up" ]]; then
 
   terraform plan \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
-    -var="coyote_pipeline_id=$COYOTE_PIPELINE_ID" \
+    -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
     -var="stage_name=$STAGE_NAME" \
     -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
     -var="client_aws_region=$CLIENT_AWS_REGION" \
@@ -56,7 +56,7 @@ if [[ "${direction}" == "up" ]]; then
 
   terraform apply \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
-    -var="coyote_pipeline_id=$COYOTE_PIPELINE_ID" \
+    -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
     -var="stage_name=$STAGE_NAME" \
     -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
     -var="client_aws_region=$CLIENT_AWS_REGION" \
@@ -75,7 +75,7 @@ elif [[ "${direction}" == "down" ]]; then
 
   terraform destroy \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
-    -var="coyote_pipeline_id=$COYOTE_PIPELINE_ID" \
+    -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
     -var="stage_name=$STAGE_NAME" \
     -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
     -var="client_aws_region=$CLIENT_AWS_REGION" \
