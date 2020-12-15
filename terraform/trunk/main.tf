@@ -40,13 +40,13 @@ EOF
 
 resource "aws_iam_policy_attachment" "fox-lambda-role-basic-execution-policy" {
   name       = "xilution-fox-${var.fox_pipeline_id}-lambda-role-basic-execution-policy"
-  roles      = [aws_iam_role.fox-lambda-role]
+  roles      = [aws_iam_role.fox-lambda-role.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_policy_attachment" "fox-lambda-role-dynamo-access" {
   name       = "xilution-fox-${var.fox_pipeline_id}-lambda-role-dynamo-access"
-  roles      = [aws_iam_role.fox-lambda-role]
+  roles      = [aws_iam_role.fox-lambda-role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
