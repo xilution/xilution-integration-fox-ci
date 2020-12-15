@@ -26,7 +26,7 @@ cd "${buildDir}" || false
 zip -r "${sourceDir}/${functionZipFileName}" .
 cd "${sourceDir}" || false
 
-aws s3 cp "./${functionZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
+aws s3 cp "./${functionZipFileName}" "s3://xilution-fox-${pipelineId}-source-code/"
 
 layerDir=$(jq -r ".layer.layerDir" <./xilution.json)
 if [[ "${layerDir}" == "null" ]]; then
@@ -40,6 +40,6 @@ execute_commands "${commands}"
 layerZipFileName="${sourceVersion}-layer.zip"
 zip -r "${sourceDir}/${layerZipFileName}" "${layerDir}"
 
-aws s3 cp "./${layerZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
+aws s3 cp "./${layerZipFileName}" "s3://xilution-fox-${pipelineId}-source-code/"
 
 echo "All Done!"
