@@ -11,8 +11,8 @@ pipelineId=${FOX_PIPELINE_ID}
 sourceVersion=${COMMIT_ID}
 stageName=${STAGE_NAME}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-sourceBucket="xilution-fox-${pipelineId}-source-code"
-layerName="xilution-fox-${pipelineId}-${stageNameLower}-lambda-layer"
+sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
+layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
 layerZipFileName="${sourceVersion}-layer.zip"
 
 echo "Creating a new layer"
@@ -21,7 +21,7 @@ echo "${publishLayerVersionResponse}"
 layerVersionArn=$(echo "${publishLayerVersionResponse}" | jq -r ".LayerVersionArn")
 echo "New layer version arn is: ${layerVersionArn}"
 
-functionName="xilution-fox-${pipelineId}-${stageNameLower}-lambda"
+functionName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda"
 functionZipFileName="${sourceVersion}-function.zip"
 
 echo "Updating the lambda to use the new layer"
