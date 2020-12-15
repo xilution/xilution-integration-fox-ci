@@ -1,15 +1,15 @@
 data "aws_s3_bucket" "fox-source-bucket" {
-  bucket = "xilution-fox-${var.fox_pipeline_id}-source-code"
+  bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
 }
 
 data "aws_iam_role" "fox-lambda-role" {
-  name = "xilution-fox-${var.fox_pipeline_id}-lambda-role"
+  name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role"
 }
 
 # API
 
 resource "aws_apigatewayv2_api" "fox_api" {
-  name          = "xilution-fox-${var.fox_pipeline_id}-${var.stage_name}-api"
+  name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-api"
   protocol_type = "HTTP"
   cors_configuration {
     allow_headers  = ["Content-Type", "Authorization", "Location"]
@@ -25,7 +25,7 @@ resource "aws_apigatewayv2_api" "fox_api" {
 # Lambda Layer
 
 resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
-  layer_name          = "xilution-fox-${var.fox_pipeline_id}-${var.stage_name}-lambda-layer"
+  layer_name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda-layer"
   compatible_runtimes = [var.lambda_runtime]
   s3_bucket           = data.aws_s3_bucket.fox-source-bucket.id
   s3_key              = "${var.source_version}-layer.zip"
@@ -34,7 +34,7 @@ resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
 # Lambda
 
 resource "aws_lambda_function" "fox_lambda_function" {
-  function_name = "xilution-fox-${var.fox_pipeline_id}-${var.stage_name}-lambda"
+  function_name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda"
   s3_bucket     = data.aws_s3_bucket.fox-source-bucket.id
   s3_key        = "${var.source_version}-function.zip"
   layers        = [aws_lambda_layer_version.fox_lambda_layer_version.arn]
