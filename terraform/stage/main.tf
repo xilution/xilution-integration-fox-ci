@@ -31,9 +31,6 @@ resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
   compatible_runtimes = [var.lambda_runtime]
   s3_bucket           = data.aws_s3_bucket.fox-source-bucket
   s3_key              = "${var.source_version}-layer.zip"
-  tags = {
-    originator = "xilution.com"
-  }
 }
 
 # Lambda
