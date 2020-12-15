@@ -35,7 +35,6 @@ for endpoint in ${endpoints}; do
 
   INDEX=${INDEX}+1
 done
-routeKeys="[${routeKeys}]"
 echo routeKeys = ${routeKeys}
 
 terraform destroy \
