@@ -16,7 +16,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
     -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
     "${terraformModuleDir}"
 
-  if [[ ${direction} == "up"]]; then
+  if [[ "${direction}" == "up" ]]; then
 
     terraform plan \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
@@ -41,7 +41,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -auto-approve \
       "${terraformModuleDir}"
 
-  elif [[ ${direction} == "down"]]; then
+  elif [[ "${direction}" == "down" ]]; then
 
     terraform destroy \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \

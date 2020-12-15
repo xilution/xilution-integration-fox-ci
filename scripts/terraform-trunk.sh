@@ -11,7 +11,7 @@ terraform init \
   ./terraform/trunk
 
 
-if [[ ${direction} == "up"]]; then
+if [[ "${direction}" == "up" ]]; then
 
   terraform plan \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
@@ -36,7 +36,7 @@ if [[ ${direction} == "up"]]; then
     -auto-approve \
     ./terraform/trunk
 
-elif [[ ${direction} == "down"]]; then
+elif [[ "${direction}" == "down" ]]; then
 
   terraform destroy \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \

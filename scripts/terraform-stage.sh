@@ -36,7 +36,7 @@ terraform init \
   -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
   ./terraform/stage
 
-if [[ ${direction} == "up"]]; then
+if [[ "${direction}" == "up" ]]; then
 
   terraform plan \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
@@ -71,7 +71,7 @@ if [[ ${direction} == "up"]]; then
     -auto-approve \
     ./terraform/stage
 
-elif [[ ${direction} == "down"]]; then
+elif [[ "${direction}" == "down" ]]; then
 
   terraform destroy \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
