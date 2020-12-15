@@ -1,5 +1,3 @@
-data "aws_region" "current" {}
-
 data "aws_s3_bucket" "fox-source-bucket" {
   bucket = "xilution-fox-${var.fox_pipeline_id}-source-code"
 }
@@ -54,7 +52,7 @@ resource "aws_lambda_permission" "fox_lambda_permission" {
   function_name = aws_lambda_function.fox_lambda_function.function_name
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:${data.aws_region.current}:${var.client_aws_account}:${aws_apigatewayv2_api.fox_api.id}/*/*"
+  source_arn    = "arn:aws:execute-api:${var.client_aws_region}:${var.client_aws_account}:${aws_apigatewayv2_api.fox_api.id}/*/*"
 }
 
 # Integration
@@ -63,7 +61,7 @@ resource "aws_apigatewayv2_integration" "fox_api_integration" {
   api_id                 = aws_apigatewayv2_api.fox_api.id
   integration_type       = "AWS_PROXY"
   integration_method     = "POST"
-  integration_uri        = "arn:aws:apigateway:${data.aws_region.current}:lambda:path/2015-03-31/functions/${aws_lambda_function.fox_lambda_function.arn}/invocations"
+  integration_uri        = "arn:aws:apigateway:${var.client_aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.fox_lambda_function.arn}/invocations"
   connection_type        = "INTERNET"
   payload_format_version = "2.0"
 }
