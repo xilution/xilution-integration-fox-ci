@@ -1,11 +1,53 @@
-data "aws_region" "current" {}
-
 data "aws_iam_role" "cloudwatch-events-rule-invocation-role" {
   name = "xilution-cloudwatch-events-rule-invocation-role"
 }
 
 data "aws_lambda_function" "metrics-reporter-lambda" {
   function_name = "xilution-client-metrics-reporter-lambda"
+}
+
+# Source Bucket
+
+resource "aws_s3_bucket" "fox-source-bucket" {
+  bucket = "xilution-fox-${var.fox_pipeline_id}-source-code"
+  tags = {
+    originator = "xilution.com"
+  }
+}
+
+# Lambda Role
+
+resource "aws_iam_role" "fox-lambda-role" {
+  name               = "xilution-fox-${var.fox_pipeline_id}-lambda-role"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": ["lambda.amazonaws.com"]
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+  tags = {
+    originator = "xilution.com"
+  }
+}
+
+resource "aws_iam_policy_attachment" "fox-lambda-role-basic-execution-policy" {
+  name       = "xilution-fox-${var.fox_pipeline_id}-lambda-role-basic-execution-policy"
+  roles      = [aws_iam_role.fox-lambda-role]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_policy_attachment" "fox-lambda-role-dynamo-access" {
+  name       = "xilution-fox-${var.fox_pipeline_id}-lambda-role-dynamo-access"
+  roles      = [aws_iam_role.fox-lambda-role]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
 # Metrics
@@ -22,7 +64,7 @@ resource "aws_cloudwatch_event_rule" "fox-cloudwatch-every-ten-minute-event-rule
   schedule_expression = "rate(10 minutes)"
   role_arn            = data.aws_iam_role.cloudwatch-events-rule-invocation-role.arn
   tags = {
-    originator               = "xilution.com"
+    originator = "xilution.com"
   }
 }
 

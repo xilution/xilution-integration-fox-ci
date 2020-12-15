@@ -4,10 +4,7 @@ phases:
   pre_build:
     commands:
       - . ./scripts/assume-role.sh
-      - ./scripts/terraform-init-trunk.sh
   build:
     commands:
-      - ./scripts/terraform-plan-trunk.sh
-      - ./scripts/terraform-apply-trunk.sh
-      - ./scripts/cloudformation-create-or-update-stack-trunk.sh
-      - ./scripts/additional-infrastructure-up-trunk.sh
+      - ./scripts/terraform-trunk.sh up
+      - ./scripts/additional-infrastructure-trunk.sh up

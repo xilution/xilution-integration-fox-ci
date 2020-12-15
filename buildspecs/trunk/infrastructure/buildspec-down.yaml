@@ -4,10 +4,8 @@ phases:
   pre_build:
     commands:
       - . ./scripts/assume-role.sh
-      - ./scripts/terraform-init-trunk.sh
   build:
     commands:
-      - ./scripts/additional-infrastructure-down-trunk.sh
-      - ./scripts/cloudformation-delete-stack-trunk.sh
-      - ./scripts/terraform-destroy-trunk.sh
       - ./scripts/delete-fox-source-bucket-contents.sh
+      - ./scripts/additional-infrastructure-trunk.sh down
+      - ./scripts/terraform-trunk.sh down
