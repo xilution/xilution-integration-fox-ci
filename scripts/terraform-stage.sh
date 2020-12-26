@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 direction=${1}
 awsAccountId=${CLIENT_AWS_ACCOUNT}

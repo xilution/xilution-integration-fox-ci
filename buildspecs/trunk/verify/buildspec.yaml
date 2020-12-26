@@ -6,4 +6,5 @@ phases:
       nodejs: 12
   build:
     commands:
+      - ./scripts/validate-config.sh xilution-integration-fox
       - ./scripts/verify.sh

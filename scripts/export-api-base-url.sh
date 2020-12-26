@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 pipelineId=${FOX_PIPELINE_ID}
 stageName=${STAGE_NAME}

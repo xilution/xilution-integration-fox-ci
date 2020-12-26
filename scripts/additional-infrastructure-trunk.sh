@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 direction=${1}
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
