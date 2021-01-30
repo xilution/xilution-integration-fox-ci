@@ -2,9 +2,14 @@
 
 . ./scripts/common_functions.sh
 
-stageName=${STAGE_NAME}
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
-apiBaseUrl=${API_BASE_URL}
+pipelineId=${FOX_PIPELINE_ID}
+stageName=${STAGE_NAME}
+stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
+apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
+
+query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiEndpoint"
+apiBaseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
 
 wait_for_site_to_be_ready "${apiBaseUrl}"
 
