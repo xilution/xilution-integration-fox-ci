@@ -2,6 +2,14 @@
 
 direction=${1}
 sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
+pipelineId=${FOX_PIPELINE_ID}
+stageName=${STAGE_NAME}
+stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
+apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
+
+query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiId"
+apiId=$(aws apigatewayv2 get-apis | jq -r "${query}")
+
 currentDir=$(pwd)
 cd "${sourceDir}" || false
 terraformModuleDir=$(jq -r ".additionalInfrastructure?.stage?.terraformModuleDir" <./xilution.json)
@@ -28,6 +36,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="xilution_environment=$XILUTION_ENVIRONMENT" \
       -var="xilution_pipeline_type=$PIPELINE_TYPE" \
       -var="stage_name=$STAGE_NAME" \
+      -var="api_id=$apiId" \
       "${terraformModuleDir}"
 
     terraform apply \
@@ -40,6 +49,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="xilution_environment=$XILUTION_ENVIRONMENT" \
       -var="xilution_pipeline_type=$PIPELINE_TYPE" \
       -var="stage_name=$STAGE_NAME" \
+      -var="api_id=$apiId" \
       -auto-approve \
       "${terraformModuleDir}"
 
@@ -55,6 +65,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="xilution_environment=$XILUTION_ENVIRONMENT" \
       -var="xilution_pipeline_type=$PIPELINE_TYPE" \
       -var="stage_name=$STAGE_NAME" \
+      -var="api_id=$apiId" \
       -auto-approve \
       "${terraformModuleDir}"
 
