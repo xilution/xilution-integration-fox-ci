@@ -15,6 +15,8 @@ sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
 layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
 layerZipFileName="${sourceVersion}-layer.zip"
 
+# TODO - don't create a new layer if the layer hasn't changed.
+
 echo "Creating a new layer"
 publishLayerVersionResponse=$(aws lambda publish-layer-version --layer-name "${layerName}" --content "S3Bucket=${sourceBucket},S3Key=${layerZipFileName}")
 echo "${publishLayerVersionResponse}"
