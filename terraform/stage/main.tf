@@ -77,6 +77,20 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
   }
 }
 
+# Authorizer
+
+resource "aws_apigatewayv2_authorizer" "authorizer" {
+  api_id           = aws_apigatewayv2_api.fox_api.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = var.authorizer.name
+
+  jwt_configuration {
+    audience = var.authorizer.jwt.audience
+    issuer   = var.authorizer.jwt.issuer
+  }
+}
+
 # Routes
 
 resource "aws_apigatewayv2_route" "api_route" {

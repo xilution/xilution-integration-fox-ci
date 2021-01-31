@@ -11,6 +11,7 @@ currentDir=$(pwd)
 cd "${sourceDir}" || false
 handler=$(jq -r ".handler" <./xilution.json)
 runtime=$(jq -r ".runtime" <./xilution.json)
+apiAuthorizer=$(jq -r ".api.authorizer" <./xilution.json)
 endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
 cd "${currentDir}" || false
 routeKeys=""
@@ -52,6 +53,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
     -var="route_keys=[${routeKeys}]" \
+    -var="authorizer=${apiAuthorizer}" \
     ./terraform/stage
 
   terraform apply \
@@ -68,6 +70,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
     -var="route_keys=[${routeKeys}]" \
+    -var="authorizer=${apiAuthorizer}" \
     -auto-approve \
     ./terraform/stage
 
@@ -87,6 +90,7 @@ elif [[ "${direction}" == "down" ]]; then
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
     -var="route_keys=[${routeKeys}]" \
+    -var="authorizer=${apiAuthorizer}" \
     -auto-approve \
     ./terraform/stage
 

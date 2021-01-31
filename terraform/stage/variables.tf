@@ -68,3 +68,14 @@ variable "route_keys" {
   type        = list(string)
   description = "A List of API Route Keys"
 }
+
+variable "authorizer" {
+  type = object({
+    name = string
+    jwt = object({
+      audience = list(string)
+      issuer = string
+    })
+  })
+  description = "The API Authorizer"
+}
