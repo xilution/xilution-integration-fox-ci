@@ -64,18 +64,23 @@ variable "source_version" {
   description = "Source Version"
 }
 
-variable "route_keys" {
-  type        = list(string)
-  description = "A List of API Route Keys"
-}
-
-variable "authorizer" {
+variable "api" {
   type = object({
-    name = string
-    jwt = object({
-      audience = list(string)
-      issuer = string
+    endpoints = list(object({
+      id     = string,
+      method = string,
+      path   = string,
+      authorization = object({
+        scopes = list(string)
+      })
+    })),
+    authorizer = object({
+      name = string
+      jwt = object({
+        audience = list(string)
+        issuer   = string
+      })
     })
   })
-  description = "The API Authorizer"
+  description = "The API Settings"
 }

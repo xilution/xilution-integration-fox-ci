@@ -80,22 +80,25 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
 # Authorizer
 
 resource "aws_apigatewayv2_authorizer" "authorizer" {
+  count            = var.api.authorizer ? 1 : 0
   api_id           = aws_apigatewayv2_api.fox_api.id
   authorizer_type  = "JWT"
   identity_sources = ["$request.header.Authorization"]
-  name             = var.authorizer.name
+  name             = var.api.authorizer.name
 
   jwt_configuration {
-    audience = var.authorizer.jwt.audience
-    issuer   = var.authorizer.jwt.issuer
+    audience = var.api.authorizer.jwt.audience
+    issuer   = var.api.authorizer.jwt.issuer
   }
 }
 
 # Routes
 
-resource "aws_apigatewayv2_route" "api_route" {
-  for_each  = toset(var.route_keys)
-  api_id    = aws_apigatewayv2_api.fox_api.id
-  route_key = each.value
-  target    = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
+module "routes" {
+  for_each     = toset(var.api.endpoints)
+  source       = "./route"
+  apiId        = aws_apigatewayv2_api.fox_api.id
+  target       = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
+  endpoint     = each.value
+  authorizerId = aws_apigatewayv2_authorizer.authorizer[count.index].id
 }

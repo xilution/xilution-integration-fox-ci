@@ -11,25 +11,7 @@ currentDir=$(pwd)
 cd "${sourceDir}" || false
 handler=$(jq -r ".handler" <./xilution.json)
 runtime=$(jq -r ".runtime" <./xilution.json)
-apiAuthorizer=$(jq -r ".api.authorizer" <./xilution.json)
-endpoints=$(jq -r ".api.endpoints[] | @base64" <./xilution.json)
-cd "${currentDir}" || false
-routeKeys=""
-INDEX=0
-for endpoint in ${endpoints}; do
-  method=$(echo "${endpoint}" | base64 --decode | jq -r ".method")
-  methodUpper=$(echo "${method}" | tr '[:lower:]' '[:upper:]')
-  path=$(echo "${endpoint}" | base64 --decode | jq -r ".path")
-
-  if [[ "${INDEX}" == 0 ]]; then
-    routeKeys="\"${methodUpper} ${path}\""
-  else
-    routeKeys="${routeKeys}, \"${methodUpper} ${path}\""
-  fi
-
-  INDEX=${INDEX}+1
-done
-echo routeKeys = ${routeKeys}
+api=$(jq -r ".api" <./xilution.json)
 
 terraform init \
   -backend-config="key=xilution-integration-fox/${pipelineId}/${stageName}/terraform.tfstate" \
@@ -52,8 +34,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="lambda_runtime=${runtime}" \
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
-    -var="route_keys=[${routeKeys}]" \
-    -var="authorizer=${apiAuthorizer}" \
+    -var="api=${api}" \
     ./terraform/stage
 
   terraform apply \
@@ -69,8 +50,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="lambda_runtime=${runtime}" \
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
-    -var="route_keys=[${routeKeys}]" \
-    -var="authorizer=${apiAuthorizer}" \
+    -var="api=${api}" \
     -auto-approve \
     ./terraform/stage
 
@@ -89,8 +69,7 @@ elif [[ "${direction}" == "down" ]]; then
     -var="lambda_runtime=${runtime}" \
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
-    -var="route_keys=[${routeKeys}]" \
-    -var="authorizer=${apiAuthorizer}" \
+    -var="api=${api}" \
     -auto-approve \
     ./terraform/stage
 
