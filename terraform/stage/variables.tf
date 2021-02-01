@@ -64,34 +64,28 @@ variable "source_version" {
   description = "Source Version"
 }
 
-variable "api" {
+variable "public_endpoints" {
   type = object({
-    endpoints = list(object({
-      id     = string,
-      method = string,
-      path   = string,
-      authorization = object({
-        scopes = list(string)
-      })
-    })),
-    authorizer = object({
-      name = string
-      jwt = object({
-        audience = list(string)
-        issuer   = string
-      })
-    })
+    id     = string
+    method = string
+    path   = string
   })
-  default = {
-    endpoints = [
-      {
-        id            = null
-        method        = null
-        path          = null
-        authorization = null
-      }
-    ]
-    authorizer = null
-  }
-  description = "The API Settings"
+}
+
+variable "private_endpoints" {
+  type = object({
+    id     = string
+    method = string
+    path   = string
+    scopes = list(string)
+  })
+}
+
+variable "jwt_authorizer" {
+  type = object({
+    audience = list(string)
+    issuer   = string
+  })
+  description = "The JWT Authorizer"
+  default     = null
 }

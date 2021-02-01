@@ -11,7 +11,9 @@ currentDir=$(pwd)
 cd "${sourceDir}" || false
 handler=$(jq -r ".handler" <./xilution.json)
 runtime=$(jq -r ".runtime" <./xilution.json)
-api=$(jq -r ".api" <./xilution.json)
+publicEndpoints=$(jq -r ".api.endpoints.public" <./xilution.json)
+privateEndpoints=$(jq -r ".api.endpoints.private" <./xilution.json)
+jwtAuthorizer=$(jq -r ".api.jwtAuthorizer" <./xilution.json)
 cd "${currentDir}" || false
 
 terraform init \
@@ -35,7 +37,9 @@ if [[ "${direction}" == "up" ]]; then
     -var="lambda_runtime=${runtime}" \
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
-    -var="api=${api}" \
+    -var="public_endpoints=${publicEndpoints}" \
+    -var="private_endpoints=${privateEndpoints}" \
+    -var="jwt_authorizer=${jwtAuthorizer}" \
     ./terraform/stage
 
   terraform apply \
@@ -51,7 +55,9 @@ if [[ "${direction}" == "up" ]]; then
     -var="lambda_runtime=${runtime}" \
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
-    -var="api=${api}" \
+    -var="public_endpoints=${publicEndpoints}" \
+    -var="private_endpoints=${privateEndpoints}" \
+    -var="jwt_authorizer=${jwtAuthorizer}" \
     -auto-approve \
     ./terraform/stage
 
@@ -70,7 +76,9 @@ elif [[ "${direction}" == "down" ]]; then
     -var="lambda_runtime=${runtime}" \
     -var="lambda_handler=${handler}" \
     -var="source_version=${sourceVersion}" \
-    -var="api=${api}" \
+    -var="public_endpoints=${publicEndpoints}" \
+    -var="private_endpoints=${privateEndpoints}" \
+    -var="jwt_authorizer=${jwtAuthorizer}" \
     -auto-approve \
     ./terraform/stage
 
