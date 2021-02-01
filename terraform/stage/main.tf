@@ -80,7 +80,7 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
 # Authorizer
 
 locals {
-  authorizer_count = var.jwt_authorizer ? 1 : 0
+  authorizer_count = var.jwt_authorizer != null ? 1 : 0
 }
 
 resource "aws_apigatewayv2_authorizer" "authorizer" {
