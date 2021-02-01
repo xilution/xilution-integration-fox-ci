@@ -1,4 +1,4 @@
-variable "apiId" {
+variable "api_id" {
   type        = string
   description = "The API ID"
 }
@@ -20,7 +20,7 @@ variable "endpoint" {
   description = "The API Settings"
 }
 
-variable "authorizerId" {
+variable "authorizer_id" {
   type        = string
   description = "The Authorizer Name"
 }

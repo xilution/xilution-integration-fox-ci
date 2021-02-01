@@ -95,10 +95,10 @@ resource "aws_apigatewayv2_authorizer" "authorizer" {
 # Routes
 
 module "routes" {
-  for_each     = toset(var.api.endpoints)
-  source       = "./route"
-  apiId        = aws_apigatewayv2_api.fox_api.id
-  target       = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
-  endpoint     = each.value
-  authorizerId = aws_apigatewayv2_authorizer.authorizer[count.index].id
+  for_each      = toset(var.api.endpoints)
+  source        = "./route"
+  api_id        = aws_apigatewayv2_api.fox_api.id
+  target        = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
+  endpoint      = each.value
+  authorizer_id = aws_apigatewayv2_authorizer.authorizer[count.index].id
 }

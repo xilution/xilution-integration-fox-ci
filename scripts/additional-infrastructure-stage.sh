@@ -1,15 +1,15 @@
 #!/bin/bash -e
 
 direction=${1}
-sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 pipelineId=${FOX_PIPELINE_ID}
 stageName=${STAGE_NAME}
+sourceVersion=${COMMIT_ID}
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
-
 query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiId"
 apiId=$(aws apigatewayv2 get-apis | jq -r "${query}")
 
+sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
 currentDir=$(pwd)
 cd "${sourceDir}" || false
 terraformModuleDir=$(jq -r ".additionalInfrastructure?.stage?.terraformModuleDir" <./xilution.json)
