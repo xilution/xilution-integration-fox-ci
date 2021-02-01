@@ -4,7 +4,3 @@ provider "aws" {
   }
   region  = "us-east-1"
 }
-
-provider "null" {
-  version = "2.1"
-}
