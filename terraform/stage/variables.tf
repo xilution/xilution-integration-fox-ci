@@ -65,20 +65,20 @@ variable "source_version" {
 }
 
 variable "public_endpoints" {
-  type = object({
+  type = list(object({
     id     = string
     method = string
     path   = string
-  })
+  }))
 }
 
 variable "private_endpoints" {
-  type = object({
+  type = list(object({
     id     = string
     method = string
     path   = string
     scopes = list(string)
-  })
+  }))
 }
 
 variable "jwt_authorizer" {
