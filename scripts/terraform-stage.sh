@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 direction=${1}
+awsAccountId=${CLIENT_AWS_ACCOUNT}
 pipelineId=${FOX_PIPELINE_ID}
 stageName=${STAGE_NAME}
 sourceVersion=${COMMIT_ID}
@@ -11,10 +12,11 @@ cd "${sourceDir}" || false
 handler=$(jq -r ".handler" <./xilution.json)
 runtime=$(jq -r ".runtime" <./xilution.json)
 api=$(jq -r ".api" <./xilution.json)
+cd "${currentDir}" || false
 
 terraform init \
   -backend-config="key=xilution-integration-fox/${pipelineId}/${stageName}/terraform.tfstate" \
-  -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
+  -backend-config="bucket=xilution-terraform-backend-state-bucket-${awsAccountId}" \
   -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
   ./terraform/stage
 

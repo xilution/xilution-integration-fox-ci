@@ -10,7 +10,6 @@ terraform init \
   -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
   ./terraform/trunk
 
-
 if [[ "${direction}" == "up" ]]; then
 
   terraform plan \
