@@ -66,7 +66,6 @@ variable "source_version" {
 
 variable "public_endpoints" {
   type = map(object({
-    id     = string
     method = string
     path   = string
   }))
@@ -74,7 +73,6 @@ variable "public_endpoints" {
 
 variable "private_endpoints" {
   type = map(object({
-    id     = string
     method = string
     path   = string
     scopes = list(string)
