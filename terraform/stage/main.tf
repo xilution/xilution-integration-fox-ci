@@ -79,8 +79,12 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
 
 # Authorizer
 
+locals {
+  authorizer_count = var.jwt_authorizer ? 1 : 0
+}
+
 resource "aws_apigatewayv2_authorizer" "authorizer" {
-  count            = var.jwt_authorizer ? 1 : 0
+  count            = local.authorizer_count
   api_id           = aws_apigatewayv2_api.fox_api.id
   authorizer_type  = "JWT"
   identity_sources = ["$request.header.Authorization"]
@@ -110,5 +114,5 @@ resource "aws_apigatewayv2_route" "private_api_route" {
   target               = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
   authorization_scopes = each.value.scopes
   authorization_type   = "JWT"
-  authorizer_id        = aws_apigatewayv2_authorizer.authorizer[count.index].id
+  authorizer_id        = aws_apigatewayv2_authorizer.authorizer[local.authorizer_count - 1].id
 }
