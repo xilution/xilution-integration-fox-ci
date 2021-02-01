@@ -110,5 +110,5 @@ resource "aws_apigatewayv2_route" "private_api_route" {
   target               = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
   authorization_scopes = each.value.scopes
   authorization_type   = "JWT"
-  authorizer_id        = aws_apigatewayv2_authorizer.authorizer[count.index].id
+  authorizer_id        = aws_apigatewayv2_authorizer.authorizer.id
 }
