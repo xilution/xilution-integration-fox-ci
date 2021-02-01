@@ -82,5 +82,16 @@ variable "api" {
       })
     })
   })
+  default = {
+    endpoints = [
+      {
+        id            = null
+        method        = null
+        path          = null
+        authorization = null
+      }
+    ]
+    authorizer = null
+  }
   description = "The API Settings"
 }

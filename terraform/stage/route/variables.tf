@@ -17,6 +17,12 @@ variable "endpoint" {
       scopes = list(string)
     })
   })
+  default = {
+    id            = null
+    method        = null
+    path          = null
+    authorization = null
+  }
   description = "The API Settings"
 }
 
