@@ -73,7 +73,8 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
   name        = "$default"
   auto_deploy = true
   stage_variables = {
-    stage = var.stage_name
+    stageName = var.stage_name
+    pipelineId = var.fox_pipeline_id
   }
 }
 
