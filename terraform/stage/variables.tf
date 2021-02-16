@@ -69,6 +69,8 @@ variable "public_endpoints" {
     method = string
     path   = string
   }))
+  description = "A collection of public endpoints"
+  default     = null
 }
 
 variable "private_endpoints" {
@@ -77,6 +79,8 @@ variable "private_endpoints" {
     path   = string
     scopes = list(string)
   }))
+  description = "A collection of private endpoints"
+  default     = null
 }
 
 variable "jwt_authorizer" {

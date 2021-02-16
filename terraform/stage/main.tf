@@ -6,20 +6,9 @@ data "aws_iam_role" "fox-lambda-role" {
   name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role"
 }
 
-# API
-
-resource "aws_apigatewayv2_api" "fox_api" {
-  name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-api"
-  protocol_type = "HTTP"
-  cors_configuration {
-    allow_headers  = ["Content-Type", "Authorization", "Location"]
-    expose_headers = ["Location"]
-    allow_origins  = ["*"]
-    allow_methods  = ["*"]
-  }
-  tags = {
-    originator = "xilution.com"
-  }
+locals {
+  api_count        = var.public_endpoints != null ? 1 : 0 + var.private_endpoints != null ? 1 : 0
+  authorizer_count = var.jwt_authorizer != null ? 1 : 0
 }
 
 # Lambda Layer
@@ -46,9 +35,27 @@ resource "aws_lambda_function" "fox_lambda_function" {
   }
 }
 
+# API
+
+resource "aws_apigatewayv2_api" "fox_api" {
+  count         = local.api_count
+  name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-api"
+  protocol_type = "HTTP"
+  cors_configuration {
+    allow_headers  = ["Content-Type", "Authorization", "Location"]
+    expose_headers = ["Location"]
+    allow_origins  = ["*"]
+    allow_methods  = ["*"]
+  }
+  tags = {
+    originator = "xilution.com"
+  }
+}
+
 # Lambda Permissions
 
 resource "aws_lambda_permission" "fox_lambda_permission" {
+  count         = local.api_count
   function_name = aws_lambda_function.fox_lambda_function.function_name
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
@@ -58,6 +65,7 @@ resource "aws_lambda_permission" "fox_lambda_permission" {
 # Integration
 
 resource "aws_apigatewayv2_integration" "fox_api_integration" {
+  count                  = local.api_count
   api_id                 = aws_apigatewayv2_api.fox_api.id
   integration_type       = "AWS_PROXY"
   integration_method     = "POST"
@@ -69,20 +77,17 @@ resource "aws_apigatewayv2_integration" "fox_api_integration" {
 # Stage
 
 resource "aws_apigatewayv2_stage" "fox_api_stage" {
+  count       = local.api_count
   api_id      = aws_apigatewayv2_api.fox_api.id
   name        = "$default"
   auto_deploy = true
   stage_variables = {
-    stageName = var.stage_name
+    stageName  = var.stage_name
     pipelineId = var.fox_pipeline_id
   }
 }
 
 # Authorizer
-
-locals {
-  authorizer_count = var.jwt_authorizer != null ? 1 : 0
-}
 
 resource "aws_apigatewayv2_authorizer" "authorizer" {
   count            = local.authorizer_count
