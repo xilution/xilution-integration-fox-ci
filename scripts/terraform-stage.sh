@@ -16,7 +16,7 @@ privateEndpoints=$(jq -r ".api.endpoints.private" <./xilution.json)
 jwtAuthorizer=$(jq -r ".api.jwtAuthorizer" <./xilution.json)
 cd "${currentDir}" || false
 
-terraform init \
+terraform init -no-color \
   -backend-config="key=xilution-integration-fox/${pipelineId}/${stageName}/terraform.tfstate" \
   -backend-config="bucket=xilution-terraform-backend-state-bucket-${awsAccountId}" \
   -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
@@ -24,7 +24,7 @@ terraform init \
 
 if [[ "${direction}" == "up" ]]; then
 
-  terraform plan \
+  terraform plan -no-color \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
     -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
     -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
@@ -42,7 +42,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="jwt_authorizer=${jwtAuthorizer}" \
     ./terraform/stage
 
-  terraform apply \
+  terraform apply -no-color \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
     -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
     -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
@@ -63,7 +63,7 @@ if [[ "${direction}" == "up" ]]; then
 
 elif [[ "${direction}" == "down" ]]; then
 
-  terraform destroy \
+  terraform destroy -no-color \
     -var="organization_id=$XILUTION_ORGANIZATION_ID" \
     -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
     -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \

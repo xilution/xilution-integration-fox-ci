@@ -18,7 +18,7 @@ echo "terraformModuleDir = ${terraformModuleDir}"
 
 if [[ "${terraformModuleDir}" != "null" ]]; then
 
-  terraform init \
+  terraform init -no-color \
     -backend-config="key=xilution-integration-fox/${FOX_PIPELINE_ID}/${STAGE_NAME}/additional-infrastructure.tfstate" \
     -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
     -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
@@ -26,7 +26,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
 
   if [[ "${direction}" == "up" ]]; then
 
-    terraform plan \
+    terraform plan -no-color \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
       -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
       -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
@@ -39,7 +39,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="api_id=$apiId" \
       "${terraformModuleDir}"
 
-    terraform apply \
+    terraform apply -no-color \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
       -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
       -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
@@ -55,7 +55,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
 
   elif [[ "${direction}" == "down" ]]; then
 
-    terraform destroy \
+    terraform destroy -no-color \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
       -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
       -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
