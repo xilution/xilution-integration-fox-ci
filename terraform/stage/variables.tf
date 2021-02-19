@@ -70,7 +70,7 @@ variable "public_endpoints" {
     path   = string
   }))
   description = "A collection of public endpoints"
-  default     = null
+  default     = {}
 }
 
 variable "private_endpoints" {
@@ -80,7 +80,7 @@ variable "private_endpoints" {
     scopes = list(string)
   }))
   description = "A collection of private endpoints"
-  default     = null
+  default     = {}
 }
 
 variable "jwt_authorizer" {
