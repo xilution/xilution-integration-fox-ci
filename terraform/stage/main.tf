@@ -29,6 +29,13 @@ resource "aws_lambda_function" "fox_lambda_function" {
   handler       = var.lambda_handler
   role          = data.aws_iam_role.fox-lambda-role.arn
   runtime       = var.lambda_runtime
+  environment {
+    variables = {
+      STAGE_NAME      = var.stage_name
+      FOX_PIPELINE_ID = var.fox_pipeline_id
+      PIPELINE_ID     = var.fox_pipeline_id
+    }
+  }
   tags = {
     originator = "xilution.com"
   }
