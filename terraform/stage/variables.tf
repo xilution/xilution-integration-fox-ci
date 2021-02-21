@@ -91,3 +91,9 @@ variable "jwt_authorizer" {
   description = "The JWT Authorizer"
   default     = null
 }
+
+variable "vpc_tag_value" {
+  type        = string
+  description = "The vpc_tag value to look for when referencing VPC resources"
+  default     = null
+}

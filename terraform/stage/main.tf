@@ -26,6 +26,25 @@ data "aws_iam_role" "fox-lambda-role" {
   name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role"
 }
 
+data "aws_security_groups" "lambda_security_groups" {
+  tags = {
+    vpc_tag = var.vpc_tag_value
+  }
+}
+
+data "aws_vpc" "lambda_vpc" {
+  tags = {
+    vpc_tag = var.vpc_tag_value
+  }
+}
+
+data "aws_subnet_ids" "lambda_subnet_ids" {
+  vpc_id = data.aws_vpc.lambda_vpc.id
+  tags = {
+    vpc_tag = var.vpc_tag_value
+  }
+}
+
 locals {
   api_count = var.public_endpoints != null ? 1 : 0 + var.private_endpoints != null ? 1 : 0
 }
@@ -52,6 +71,10 @@ resource "aws_lambda_function" "fox_lambda_function" {
   role             = data.aws_iam_role.fox-lambda-role.arn
   runtime          = var.lambda_runtime
   timeout          = 30
+  vpc_config {
+    security_group_ids = data.aws_security_groups.lambda_security_groups.ids
+    subnet_ids         = data.aws_subnet_ids.lambda_subnet_ids.ids
+  }
   environment {
     variables = {
       STAGE_NAME      = var.stage_name

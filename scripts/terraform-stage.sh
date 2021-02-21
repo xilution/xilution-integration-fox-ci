@@ -14,6 +14,7 @@ runtime=$(jq -r ".runtime" <./xilution.json)
 publicEndpoints=$(jq -r ".api.endpoints.public" <./xilution.json)
 privateEndpoints=$(jq -r ".api.endpoints.private" <./xilution.json)
 jwtAuthorizer=$(jq -r ".api.jwtAuthorizer" <./xilution.json)
+vpcTagValue=$(jq -r ".api.vpcTagValue?" <./xilution.json)
 cd "${currentDir}" || false
 
 terraform init -no-color \
@@ -40,6 +41,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="public_endpoints=${publicEndpoints}" \
     -var="private_endpoints=${privateEndpoints}" \
     -var="jwt_authorizer=${jwtAuthorizer}" \
+    -var="vpc_tag_value=${vpcTagValue}" \
     ./terraform/stage
 
   terraform apply -no-color \
@@ -58,6 +60,7 @@ if [[ "${direction}" == "up" ]]; then
     -var="public_endpoints=${publicEndpoints}" \
     -var="private_endpoints=${privateEndpoints}" \
     -var="jwt_authorizer=${jwtAuthorizer}" \
+    -var="vpc_tag_value=${vpcTagValue}" \
     -auto-approve \
     ./terraform/stage
 
@@ -79,6 +82,7 @@ elif [[ "${direction}" == "down" ]]; then
     -var="public_endpoints=${publicEndpoints}" \
     -var="private_endpoints=${privateEndpoints}" \
     -var="jwt_authorizer=${jwtAuthorizer}" \
+    -var="vpc_tag_value=${vpcTagValue}" \
     -auto-approve \
     ./terraform/stage
 
