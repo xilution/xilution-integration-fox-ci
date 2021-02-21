@@ -2,6 +2,18 @@ data "aws_s3_bucket" "fox-source-bucket" {
   bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
 }
 
+data "aws_s3_bucket_object" "fox-source-bucket-layer-source" {
+  bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
+  key    = "${var.source_version}-layer.zip"
+  source = "layer.zip"
+}
+
+data "aws_s3_bucket_object" "fox-source-bucket-function-source" {
+  bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
+  key    = "${var.source_version}-layer.zip"
+  source = "function.zip"
+}
+
 data "aws_iam_role" "fox-lambda-role" {
   name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role"
 }
@@ -12,28 +24,25 @@ locals {
 
 # Lambda Layer
 
-locals {
-  layer_s3_key = "${var.source_version}-layer.zip"
-}
-
 resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
   layer_name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda-layer"
   compatible_runtimes = [var.lambda_runtime]
   s3_bucket           = data.aws_s3_bucket.fox-source-bucket.id
-  s3_key              = local.layer_s3_key
-  source_code_hash    = filebase64sha256(local.layer_s3_key)
+  s3_key              = data.aws_s3_bucket_object.fox-source-bucket-layer-source.key
+  source_code_hash    = filebase64sha256(data.aws_s3_bucket_object.fox-source-bucket-layer-source.source)
 }
 
 # Lambda
 
 resource "aws_lambda_function" "fox_lambda_function" {
-  function_name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda"
-  s3_bucket     = data.aws_s3_bucket.fox-source-bucket.id
-  s3_key        = "${var.source_version}-function.zip"
-  layers        = [aws_lambda_layer_version.fox_lambda_layer_version.arn]
-  handler       = var.lambda_handler
-  role          = data.aws_iam_role.fox-lambda-role.arn
-  runtime       = var.lambda_runtime
+  function_name    = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda"
+  s3_bucket        = data.aws_s3_bucket.fox-source-bucket.id
+  s3_key           = data.aws_s3_bucket_object.fox-source-bucket-function-source.key
+  source_code_hash = filebase64sha256(data.aws_s3_bucket_object.fox-source-bucket-function-source.source)
+  layers           = [aws_lambda_layer_version.fox_lambda_layer_version.arn]
+  handler          = var.lambda_handler
+  role             = data.aws_iam_role.fox-lambda-role.arn
+  runtime          = var.lambda_runtime
   environment {
     variables = {
       STAGE_NAME      = var.stage_name

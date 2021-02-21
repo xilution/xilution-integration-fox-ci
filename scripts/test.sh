@@ -11,7 +11,6 @@ apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
 query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiEndpoint"
 apiBaseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
 
-
 cd "${sourceDir}" || false
 
 testDetails=$(jq -r ".tests.${stageName}[] | @base64" <./xilution.json)
