@@ -11,13 +11,13 @@ apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
 query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiEndpoint"
 apiBaseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
 
-wait_for_site_to_be_ready "${apiBaseUrl}"
 
 cd "${sourceDir}" || false
 
 testDetails=$(jq -r ".tests.${stageName}[] | @base64" <./xilution.json)
 
 for testDetail in ${testDetails}; do
+  wait_for_site_to_be_ready "${apiBaseUrl}"
   testName=$(echo "${testDetail}" | base64 --decode | jq -r ".name?")
   echo "Running: ${testName}"
   commands=$(echo "${testDetail}" | base64 --decode | jq -r ".commands[]? | @base64")
