@@ -12,11 +12,16 @@ locals {
 
 # Lambda Layer
 
+locals {
+  layer_s3_key = "${var.source_version}-layer.zip"
+}
+
 resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
   layer_name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda-layer"
   compatible_runtimes = [var.lambda_runtime]
   s3_bucket           = data.aws_s3_bucket.fox-source-bucket.id
-  s3_key              = "${var.source_version}-layer.zip"
+  s3_key              = local.layer_s3_key
+  source_code_hash    = filebase64sha256(local.layer_s3_key)
 }
 
 # Lambda
