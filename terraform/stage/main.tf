@@ -51,6 +51,7 @@ resource "aws_lambda_function" "fox_lambda_function" {
   handler          = var.lambda_handler
   role             = data.aws_iam_role.fox-lambda-role.arn
   runtime          = var.lambda_runtime
+  timeout          = 30
   environment {
     variables = {
       STAGE_NAME      = var.stage_name
