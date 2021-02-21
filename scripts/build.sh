@@ -27,6 +27,8 @@ zip -r "${sourceDir}/${functionZipFileName}" .
 cd "${sourceDir}" || false
 
 aws s3 cp "./${functionZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
+openssl dgst -sha256 -binary "./${functionZipFileName}" | openssl enc -base64 > "./${functionZipFileName}.sha256"
+aws s3 cp "./${functionZipFileName}.sha256" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
 
 layerDir=$(jq -r ".layer.layerDir" <./xilution.json)
 if [[ "${layerDir}" == "null" ]]; then
@@ -41,5 +43,7 @@ layerZipFileName="${sourceVersion}-layer.zip"
 zip -r "${sourceDir}/${layerZipFileName}" "${layerDir}"
 
 aws s3 cp "./${layerZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
+openssl dgst -sha256 -binary "./${layerZipFileName}" | openssl enc -base64 > "./${layerZipFileName}.sha256"
+aws s3 cp "./${layerZipFileName}.sha256" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
 
 echo "All Done!"
