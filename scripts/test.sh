@@ -13,7 +13,7 @@ apiBaseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
 
 cd "${sourceDir}" || false
 
-testDetails=$(jq -r ".tests.${stageName}[] | @base64" <./xilution.json)
+testDetails=$(jq -r ".tests.${stageNameLower}[]? | @base64" <./xilution.json)
 
 for testDetail in ${testDetails}; do
   wait_for_site_to_be_ready "${apiBaseUrl}"
