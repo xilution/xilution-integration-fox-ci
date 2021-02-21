@@ -2,9 +2,19 @@ data "aws_s3_bucket" "fox-source-bucket" {
   bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
 }
 
+data "aws_s3_bucket_object" "fox-source-bucket-layer-source-zip" {
+  bucket = data.aws_s3_bucket.fox-source-bucket.id
+  key    = "${var.source_version}-layer.zip"
+}
+
 data "aws_s3_bucket_object" "fox-source-bucket-layer-source-sha256" {
   bucket = data.aws_s3_bucket.fox-source-bucket.id
   key    = "${var.source_version}-layer.zip.sha256"
+}
+
+data "aws_s3_bucket_object" "fox-source-bucket-function-source-zip" {
+  bucket = data.aws_s3_bucket.fox-source-bucket.id
+  key    = "${var.source_version}-function.zip"
 }
 
 data "aws_s3_bucket_object" "fox-source-bucket-function-source-sha256" {
@@ -26,7 +36,7 @@ resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
   layer_name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda-layer"
   compatible_runtimes = [var.lambda_runtime]
   s3_bucket           = data.aws_s3_bucket.fox-source-bucket.id
-  s3_key              = data.aws_s3_bucket_object.fox-source-bucket-layer-source-sha256.key
+  s3_key              = data.aws_s3_bucket_object.fox-source-bucket-layer-source-zip.key
   source_code_hash    = data.aws_s3_bucket_object.fox-source-bucket-layer-source-sha256.body
 }
 
@@ -35,7 +45,7 @@ resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
 resource "aws_lambda_function" "fox_lambda_function" {
   function_name    = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-lambda"
   s3_bucket        = data.aws_s3_bucket.fox-source-bucket.id
-  s3_key           = data.aws_s3_bucket_object.fox-source-bucket-function-source-sha256.key
+  s3_key           = data.aws_s3_bucket_object.fox-source-bucket-function-source-zip.key
   source_code_hash = data.aws_s3_bucket_object.fox-source-bucket-function-source-sha256.body
   layers           = [aws_lambda_layer_version.fox_lambda_layer_version.arn]
   handler          = var.lambda_handler
