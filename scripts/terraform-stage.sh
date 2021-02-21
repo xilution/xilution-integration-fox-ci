@@ -14,7 +14,7 @@ runtime=$(jq -r ".runtime" <./xilution.json)
 publicEndpoints=$(jq -r ".api.endpoints.public" <./xilution.json)
 privateEndpoints=$(jq -r ".api.endpoints.private" <./xilution.json)
 jwtAuthorizer=$(jq -r ".api.jwtAuthorizer" <./xilution.json)
-vpcTagValue=$(jq -r ".api.vpcTagValue?" <./xilution.json)
+vpcTagValue=$(jq -r ".vpcTagValue?" <./xilution.json)
 cd "${currentDir}" || false
 
 terraform init -no-color \
