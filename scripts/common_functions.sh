@@ -16,8 +16,9 @@ wait_for_site_to_be_ready() {
   done
 
   if [[ "${count}" == "${maxAttempts}" ]]; then
-    echo "The site was never ready. Stopping the build now."
+    echo "The site was never ready. Stopping the build and exiting now."
     aws codebuild stop-build --id "${CODEBUILD_BUILD_ID}"
+    exit 1
   fi
 }
 
