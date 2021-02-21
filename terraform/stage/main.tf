@@ -34,6 +34,7 @@ resource "aws_lambda_function" "fox_lambda_function" {
       STAGE_NAME      = var.stage_name
       FOX_PIPELINE_ID = var.fox_pipeline_id
       PIPELINE_ID     = var.fox_pipeline_id
+      NO_COLOR        = "true"
     }
   }
   tags = {
