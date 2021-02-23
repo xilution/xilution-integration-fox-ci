@@ -29,15 +29,6 @@ resource "aws_iam_role" "fox-lambda-role" {
         "Service": ["lambda.amazonaws.com"]
       },
       "Effect": "Allow"
-    },
-    {
-      "Action": [
-        "ec2.CreateNetworkInterface",
-        "ec2:DescribeNetworkInterfaces",
-        "ec2:DeleteNetworkInterface"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
     }
   ]
 }
