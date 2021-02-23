@@ -59,6 +59,12 @@ resource "aws_iam_policy_attachment" "fox-lambda-role-dynamo-access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
 
+resource "aws_iam_policy_attachment" "fox-lambda-role-vpc-access" {
+  name       = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role-vpc-access"
+  roles      = [aws_iam_role.fox-lambda-role.name]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 # Metrics
 
 resource "aws_lambda_permission" "allow-fox-cloudwatch-every-ten-minute-event-rule" {
