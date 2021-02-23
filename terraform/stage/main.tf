@@ -26,22 +26,23 @@ data "aws_iam_role" "fox-lambda-role" {
   name = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-lambda-role"
 }
 
-data "aws_security_groups" "lambda_security_groups" {
+data "aws_vpc" "gazelle_vpc" {
   tags = {
-    vpc_tag = var.vpc_tag_value
+    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-vpc"
   }
 }
 
-data "aws_vpc" "lambda_vpc" {
+data "aws_subnet_id" "gazelle_public_subnet_id_1" {
+  vpc_id = data.aws_vpc.gazelle_vpc.id
   tags = {
-    vpc_tag = var.vpc_tag_value
+    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-public-subnet-1"
   }
 }
 
-data "aws_subnet_ids" "lambda_subnet_ids" {
-  vpc_id = data.aws_vpc.lambda_vpc.id
+data "aws_subnet_id" "gazelle_public_subnet_id_2" {
+  vpc_id = data.aws_vpc.gazelle_vpc.id
   tags = {
-    vpc_tag = var.vpc_tag_value
+    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-public-subnet-2"
   }
 }
 
@@ -59,6 +60,18 @@ resource "aws_lambda_layer_version" "fox_lambda_layer_version" {
   source_code_hash    = data.aws_s3_bucket_object.fox-source-bucket-layer-source-sha256.body
 }
 
+# Security Group
+
+resource "aws_security_group" "lambda_security_group" {
+  vpc_id = data.aws_vpc.gazelle_vpc.id
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Lambda
 
 resource "aws_lambda_function" "fox_lambda_function" {
@@ -72,8 +85,13 @@ resource "aws_lambda_function" "fox_lambda_function" {
   runtime          = var.lambda_runtime
   timeout          = 30
   vpc_config {
-    security_group_ids = data.aws_security_groups.lambda_security_groups.ids
-    subnet_ids         = data.aws_subnet_ids.lambda_subnet_ids.ids
+    security_group_ids = [
+      aws_security_group.lambda_security_group.id
+    ]
+    subnet_ids = [
+      data.aws_subnet_id.gazelle_public_subnet_id_1,
+      data.aws_subnet_id.gazelle_public_subnet_id_2
+    ]
   }
   environment {
     variables = {

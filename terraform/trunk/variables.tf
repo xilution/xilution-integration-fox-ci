@@ -9,6 +9,11 @@ variable "product_id" {
   default     = "9ead02f5d8a0420aaa5668e863055168"
 }
 
+variable "gazelle_pipeline_id" {
+  type        = string
+  description = "The Gazelle Pipeline ID"
+}
+
 variable "fox_pipeline_id" {
   type        = string
   description = "The Fox Pipeline ID"

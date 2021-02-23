@@ -20,6 +20,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
 
     terraform plan -no-color \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
+      -var="gazelle_pipeline_id=$GAZELLE_PIPELINE_ID" \
       -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
       -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
       -var="client_aws_region=$CLIENT_AWS_REGION" \
@@ -31,6 +32,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
 
     terraform apply -no-color \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
+      -var="gazelle_pipeline_id=$GAZELLE_PIPELINE_ID" \
       -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
       -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
       -var="client_aws_region=$CLIENT_AWS_REGION" \
@@ -45,6 +47,7 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
 
     terraform destroy -no-color \
       -var="organization_id=$XILUTION_ORGANIZATION_ID" \
+      -var="gazelle_pipeline_id=$GAZELLE_PIPELINE_ID" \
       -var="fox_pipeline_id=$FOX_PIPELINE_ID" \
       -var="client_aws_account=$CLIENT_AWS_ACCOUNT" \
       -var="client_aws_region=$CLIENT_AWS_REGION" \
