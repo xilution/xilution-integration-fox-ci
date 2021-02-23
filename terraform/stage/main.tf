@@ -32,15 +32,15 @@ data "aws_vpc" "gazelle_vpc" {
   }
 }
 
-data "aws_subnet" "gazelle_public_subnet_1" {
+data "aws_subnet" "gazelle_private_subnet_1" {
   tags = {
-    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-public-subnet-1"
+    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-private-subnet-1"
   }
 }
 
-data "aws_subnet" "gazelle_public_subnet_2" {
+data "aws_subnet" "gazelle_private_subnet_2" {
   tags = {
-    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-public-subnet-2"
+    Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-private-subnet-2"
   }
 }
 
@@ -87,8 +87,8 @@ resource "aws_lambda_function" "fox_lambda_function" {
       aws_security_group.lambda_security_group.id
     ]
     subnet_ids = [
-      data.aws_subnet.gazelle_public_subnet_1.id,
-      data.aws_subnet.gazelle_public_subnet_2.id
+      data.aws_subnet.gazelle_private_subnet_1.id,
+      data.aws_subnet.gazelle_private_subnet_2.id
     ]
   }
   environment {
