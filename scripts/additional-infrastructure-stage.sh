@@ -37,7 +37,6 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="xilution_environment=$XILUTION_ENVIRONMENT" \
       -var="xilution_pipeline_type=$PIPELINE_TYPE" \
       -var="stage_name=$STAGE_NAME" \
-      -var="api_id=$apiId" \
       "${terraformModuleDir}"
 
     terraform apply -no-color \
@@ -51,7 +50,6 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="xilution_environment=$XILUTION_ENVIRONMENT" \
       -var="xilution_pipeline_type=$PIPELINE_TYPE" \
       -var="stage_name=$STAGE_NAME" \
-      -var="api_id=$apiId" \
       -auto-approve \
       "${terraformModuleDir}"
 
@@ -68,7 +66,6 @@ if [[ "${terraformModuleDir}" != "null" ]]; then
       -var="xilution_environment=$XILUTION_ENVIRONMENT" \
       -var="xilution_pipeline_type=$PIPELINE_TYPE" \
       -var="stage_name=$STAGE_NAME" \
-      -var="api_id=$apiId" \
       -auto-approve \
       "${terraformModuleDir}"
 
