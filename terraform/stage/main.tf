@@ -32,15 +32,13 @@ data "aws_vpc" "gazelle_vpc" {
   }
 }
 
-data "aws_subnet_id" "gazelle_public_subnet_id_1" {
-  vpc_id = data.aws_vpc.gazelle_vpc.id
+data "aws_subnet" "gazelle_public_subnet_id_1" {
   tags = {
     Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-public-subnet-1"
   }
 }
 
-data "aws_subnet_id" "gazelle_public_subnet_id_2" {
-  vpc_id = data.aws_vpc.gazelle_vpc.id
+data "aws_subnet" "gazelle_public_subnet_id_2" {
   tags = {
     Name = "xilution-gazelle-${substr(var.gazelle_pipeline_id, 0, 8)}-public-subnet-2"
   }
