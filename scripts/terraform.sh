@@ -23,6 +23,8 @@ echo "direction: ${direction}"
 echo "tfPath: ${tfPath}"
 echo "tfStateFileName: ${tfStateFileName}"
 echo "tfProvider: ${tfProvider}"
+echo "productCategory: ${productCategory}"
+echo "productName: ${productName}"
 
 if [[ ! -d ${tfPath} ]]; then
   echo "Unable to find Terraform path: ${tfPath}. Nothing to do. Exiting now without raising an error."
@@ -31,7 +33,7 @@ fi
 
 if [[ "${tfProvider}" == "aws" ]]; then
   if [[ "${phase}" == "trunk" ]]; then
-    terraform init --no-color \
+    terraform init -no-color \
       -backend-config="key=xilution-${productCategory}-${productName}/${PIPELINE_ID}/${tfStateFileName}" \
       -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
       -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
@@ -39,7 +41,7 @@ if [[ "${tfProvider}" == "aws" ]]; then
     bash ./scripts/build-aws-trunk-terraform-vars.sh
   elif [[ "${phase}" == "stage" ]]; then
     [ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
-    terraform init --no-color \
+    terraform init -no-color \
       -backend-config="key=xilution-${productCategory}-${productName}/${PIPELINE_ID}/${STAGE_NAME}/${tfStateFileName}" \
       -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
       -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
@@ -55,11 +57,11 @@ else
 fi
 
 if [[ "${direction}" == "up" ]]; then
-  terraform plan --no-color -var-file=tfvars.json -out=tfplan ${tfPath}
-  terraform apply --no-color tfplan
+  terraform plan -no-color -var-file=tfvars.json -out=tfplan ${tfPath}
+  terraform apply -no-color tfplan
 elif [[ "${direction}" == "down" ]]; then
-  terraform plan --no-color -destroy -var-file=tfvars.json -out=tfdestroy ${tfPath}
-  terraform apply --no-color tfdestroy
+  terraform plan -no-color -destroy -var-file=tfvars.json -out=tfdestroy ${tfPath}
+  terraform apply -no-color tfdestroy
 else
   echo "Unsupported direction: ${direction}."
   exit 1
