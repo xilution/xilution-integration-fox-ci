@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-[ -z "$PRODUCT_CODE" ] && echo "Didn't find PRODUCT_CODE env var." && exit 1
+[ -z "$1" ] && echo "The first argument should be the product code." && exit 1
 [ -z "$XILUTION_CONFIG" ] && echo "Didn't find XILUTION_CONFIG env var." && exit 1
 
-productCode=${PRODUCT_CODE}
+productCode=${1}
 event=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq "{ \"config\": ., \"productCode\": \"${productCode}\" } | @base64")
 
 aws lambda invoke \
