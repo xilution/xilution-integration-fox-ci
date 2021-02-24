@@ -3,9 +3,13 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - ./scripts/echo-brand.sh
+      - export PIPELINE_ID=$FOX_PIPELINE_ID
       - . ./scripts/assume-role.sh
+      - . ./scripts/export-xilution-config.sh
+      - . ./scripts/export-terraform-vars.sh trunk
   build:
     commands:
-      - ./scripts/delete-fox-source-bucket-contents.sh
-      - ./scripts/additional-infrastructure-trunk.sh down
-      - ./scripts/terraform-trunk.sh down
+      - ./scripts/delete-source-bucket-contents.sh fox
+      - ./scripts/terraform.sh trunk down $ADD_INFRA_TERRAFORM_PATH_TRUNK additional-infrastructure.tfstate $TERRAFORM_PROVIDER integration fox
+      - ./scripts/terraform.sh trunk down $TERRAFORM_PATH terraform.tfstate $TERRAFORM_PROVIDER integration fox

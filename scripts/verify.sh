@@ -1,12 +1,10 @@
 #!/bin/bash -e
 
-. ./scripts/common_functions.sh
+[ -z "$XILUTION_CONFIG" ] && echo "Didn't find XILUTION_CONFIG env var." && exit 1
 
-sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
+. ./scripts/common-functions.sh
 
-cd "${sourceDir}" || false
-
-commands=$(jq -r ".lambda.verify.commands[] | @base64" <./xilution.json)
+commands=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".verify.commands[] | @base64")
 execute_commands "${commands}"
 
 echo "All Done!"

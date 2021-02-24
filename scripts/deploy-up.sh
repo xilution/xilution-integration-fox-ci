@@ -1,21 +1,18 @@
 #!/bin/bash -e
 
-. ./scripts/common_functions.sh
+[ -z "$PIPELINE_ID" ] && echo "Didn't find PIPELINE_ID env var." && exit 1
+[ -z "$COMMIT_ID" ] && echo "Didn't find COMMIT_ID env var." && exit 1
+[ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
 
-sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
-currentDir=$(pwd)
-
-cd "$sourceDir" || false
-
-pipelineId=${FOX_PIPELINE_ID}
+pipelineId=${PIPELINE_ID}
 sourceVersion=${COMMIT_ID}
 stageName=${STAGE_NAME}
+pipelineIdShort=$(echo "${pipelineId}" | cut -c1-8)
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-sourceBucket="xilution-fox-${pipelineId:0:8}-source-code"
+
+sourceBucket="xilution-fox-${pipelineIdShort}-source-code"
 layerName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-lambda-layer"
 layerZipFileName="${sourceVersion}-layer.zip"
-
-# TODO - don't create a new layer if the layer hasn't changed.
 
 echo "Creating a new layer"
 publishLayerVersionResponse=$(aws lambda publish-layer-version --layer-name "${layerName}" --content "S3Bucket=${sourceBucket},S3Key=${layerZipFileName}")
@@ -36,7 +33,5 @@ aws lambda update-function-code \
   --function-name "${functionName}" \
   --s3-bucket "${sourceBucket}" \
   --s3-key "${functionZipFileName}"
-
-cd "${currentDir}" || false
 
 echo "All Done!"

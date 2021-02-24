@@ -3,8 +3,12 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - ./scripts/echo-brand.sh
+      - export PIPELINE_ID=$FOX_PIPELINE_ID
       - . ./scripts/assume-role.sh
+      - . ./scripts/export-xilution-config.sh
+      - . ./scripts/export-terraform-vars.sh stage
   build:
     commands:
-      - ./scripts/terraform-stage.sh up
-      - ./scripts/additional-infrastructure-stage.sh up
+      - ./scripts/terraform.sh stage up $TERRAFORM_PATH terraform.tfstate $TERRAFORM_PROVIDER integration fox
+      - ./scripts/terraform.sh stage up $ADD_INFRA_TERRAFORM_PATH_STAGE additional-infrastructure.tfstate $TERRAFORM_PROVIDER integration fox

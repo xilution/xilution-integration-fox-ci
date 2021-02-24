@@ -1,12 +1,10 @@
 version: 0.2
 
-env:
-  exported-variables:
-    - API_BASE_URL
-
 phases:
   pre_build:
     commands:
+      - ./scripts/echo-brand.sh
+      - export PIPELINE_ID=$FOX_PIPELINE_ID
       - . ./scripts/assume-role.sh
   build:
     commands:

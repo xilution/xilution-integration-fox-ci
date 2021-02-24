@@ -8,11 +8,9 @@ data "aws_lambda_function" "metrics-reporter-lambda" {
 
 # Source Bucket
 
-resource "aws_s3_bucket" "fox-source-bucket" {
-  bucket = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-source-code"
-  tags = {
-    originator = "xilution.com"
-  }
+module "source-bucket" {
+  source      = "../../shared/source-bucket"
+  pipeline_id = var.pipeline_id
 }
 
 # Lambda Role
@@ -58,24 +56,13 @@ resource "aws_iam_policy_attachment" "fox-lambda-role-vpc-access" {
 
 # Metrics
 
-resource "aws_lambda_permission" "allow-fox-cloudwatch-every-ten-minute-event-rule" {
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.metrics-reporter-lambda.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.fox-cloudwatch-every-ten-minute-event-rule.arn
+module "metrics" {
+  source      = "../../shared/metrics"
+  pipeline_id = var.pipeline_id
 }
 
-resource "aws_cloudwatch_event_rule" "fox-cloudwatch-every-ten-minute-event-rule" {
-  name                = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-cloudwatch-event-rule"
-  schedule_expression = "rate(10 minutes)"
-  role_arn            = data.aws_iam_role.cloudwatch-events-rule-invocation-role.arn
-  tags = {
-    originator = "xilution.com"
-  }
-}
-
-resource "aws_cloudwatch_event_target" "fox-cloudwatch-event-target" {
-  rule  = aws_cloudwatch_event_rule.fox-cloudwatch-every-ten-minute-event-rule.name
+resource "aws_cloudwatch_event_target" "cloudwatch-event-target" {
+  rule  = module.metrics.every-ten-minute-event-rule.name
   arn   = data.aws_lambda_function.metrics-reporter-lambda.arn
   input = <<-DOC
   {

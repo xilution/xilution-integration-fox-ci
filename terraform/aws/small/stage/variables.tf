@@ -49,7 +49,7 @@ variable "xilution_environment" {
   description = "The Xilution Environment"
 }
 
-variable "xilution_pipeline_type" {
+variable "pipeline_type" {
   type        = string
   description = "The Pipeline Type"
 }

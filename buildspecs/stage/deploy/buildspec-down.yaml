@@ -3,6 +3,8 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - ./scripts/echo-brand.sh
+      - export PIPELINE_ID=$FOX_PIPELINE_ID
       - . ./scripts/assume-role.sh
   build:
     commands:

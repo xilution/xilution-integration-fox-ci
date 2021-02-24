@@ -6,7 +6,10 @@ phases:
       nodejs: 12
   pre_build:
     commands:
+      - ./scripts/echo-brand.sh
+      - export PIPELINE_ID=$FOX_PIPELINE_ID
       - . ./scripts/assume-role.sh
+      - . ./scripts/export-xilution-config.sh
   build:
     commands:
       - ./scripts/build.sh

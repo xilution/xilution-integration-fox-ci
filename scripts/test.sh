@@ -1,26 +1,49 @@
 #!/bin/bash -e
 
-. ./scripts/common_functions.sh
+[ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
+[ -z "$CODEBUILD_SRC_DIR_SourceCode" ] && echo "Didn't find CODEBUILD_SRC_DIR_SourceCode env var." && exit 1
+[ -z "$XILUTION_CONFIG" ] && echo "Didn't find XILUTION_CONFIG env var." && exit 1
+[ -z "$PIPELINE_ID" ] && echo "Didn't find PIPELINE_ID env var." && exit 1
+[ -z "$CLIENT_AWS_REGION" ] && echo "Didn't find CLIENT_AWS_REGION env var." && exit 1
+[ -z "$PIPELINE_TYPE" ] && echo "Didn't find PIPELINE_TYPE env var." && exit 1
 
-sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
-pipelineId=${FOX_PIPELINE_ID}
+. ./scripts/common-functions.sh
+
 stageName=${STAGE_NAME}
+sourceDir=${CODEBUILD_SRC_DIR_SourceCode}
+pipelineId=${PIPELINE_ID}
+currentDir=$(pwd)
+xilutionConfig=${XILUTION_CONFIG}
+
+echo "stageName = ${stageName}"
+echo "sourceDir = ${sourceDir}"
+echo "pipelineId = ${pipelineId}"
+echo "currentDir = ${currentDir}"
+echo "xilutionConfig = ${xilutionConfig}"
+
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
 apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
 
+echo "stageNameLower = ${stageNameLower}"
+echo "apiName = ${apiName}"
+
 query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiEndpoint"
-apiBaseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
+baseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
+
+echo "baseUrl = ${baseUrl}"
 
 cd "${sourceDir}" || false
 
-testDetails=$(jq -r ".tests.${stageNameLower}[]? | @base64" <./xilution.json)
+testDetails=$(echo "${xilutionConfig}" | base64 --decode | jq -r ".tests.${stageNameLower}[]? | @base64")
 
 for testDetail in ${testDetails}; do
-  wait_for_site_to_be_ready "${apiBaseUrl}"
+  wait_for_site_to_be_ready "${baseUrl}"
   testName=$(echo "${testDetail}" | base64 --decode | jq -r ".name?")
   echo "Running: ${testName}"
   commands=$(echo "${testDetail}" | base64 --decode | jq -r ".commands[]? | @base64")
   execute_commands "${commands}"
 done
+
+cd "${currentDir}" || false
 
 echo "All Done!"
