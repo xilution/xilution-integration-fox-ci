@@ -10,7 +10,7 @@ data "aws_lambda_function" "metrics-reporter-lambda" {
 
 module "source-bucket" {
   source      = "../../shared/source-bucket"
-  pipeline_id = var.pipeline_id
+  pipeline_id = var.fox_pipeline_id
 }
 
 # Lambda Role
@@ -58,7 +58,7 @@ resource "aws_iam_policy_attachment" "fox-lambda-role-vpc-access" {
 
 module "metrics" {
   source      = "../../shared/metrics"
-  pipeline_id = var.pipeline_id
+  pipeline_id = var.fox_pipeline_id
 }
 
 resource "aws_cloudwatch_event_target" "cloudwatch-event-target" {
