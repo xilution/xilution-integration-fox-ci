@@ -18,18 +18,19 @@ echo "sourceVersion = ${sourceVersion}"
 
 cd "${sourceDir}" || false
 
+commands=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.build.src.commands[] | @base64")
+execute_commands "${commands}"
+
 buildDir=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.build.src.buildDir")
 if [[ "${buildDir}" == "null" ]]; then
   echo "Unable to find build directory."
   exit 1
 fi
 
-commands=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.build.src.commands[] | @base64")
-execute_commands "${commands}"
-
-functionZipFileName="${sourceVersion}-function.zip"
 cd "${buildDir}" || false
+functionZipFileName="${sourceVersion}-function.zip"
 zip -r "${sourceDir}/${functionZipFileName}" .
+
 cd "${sourceDir}" || false
 
 aws s3 cp "./${functionZipFileName}" "s3://xilution-fox-${pipelineId:0:8}-source-code/"
