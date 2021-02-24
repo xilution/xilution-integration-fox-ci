@@ -10,7 +10,7 @@ currentDir=$(pwd)
 
 cd "${sourceDir}" || false
 
-commands=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".verify.commands[] | @base64")
+commands=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.verify.commands[] | @base64")
 execute_commands "${commands}"
 
 cd "${currentDir}" || false
