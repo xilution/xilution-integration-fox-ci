@@ -106,7 +106,7 @@ resource "aws_lambda_function" "fox_lambda_function" {
 
 module "fox_api" {
   count              = local.api_count
-  source             = "api"
+  source             = "./api"
   fox_pipeline_id    = var.fox_pipeline_id
   stage_name         = var.stage_name
   client_aws_account = var.client_aws_account
