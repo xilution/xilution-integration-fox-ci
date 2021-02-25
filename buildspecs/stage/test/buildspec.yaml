@@ -8,6 +8,7 @@ phases:
     commands:
       - ./scripts/echo-brand.sh
       - export PIPELINE_ID=$FOX_PIPELINE_ID
+      - . ./scripts/assume-role.sh
       - . ./scripts/export-xilution-config.sh
   build:
     commands:
