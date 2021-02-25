@@ -8,10 +8,11 @@ resource "aws_apigatewayv2_api" "fox_api" {
   name          = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-api"
   protocol_type = "HTTP"
   cors_configuration {
-    allow_headers  = ["Content-Type", "Authorization", "Location"]
-    expose_headers = ["Location"]
+    allow_headers  = ["*"]
+    expose_headers = ["*"]
     allow_origins  = ["*"]
     allow_methods  = ["*"]
+    max_age        = 300
   }
   tags = {
     originator = "xilution.com"
