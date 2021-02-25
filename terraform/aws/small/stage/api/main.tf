@@ -19,6 +19,12 @@ resource "aws_apigatewayv2_api" "fox_api" {
   }
 }
 
+resource "aws_ssm_parameter" "aws_apigatewayv2_api_id" {
+  name  = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${lower(var.stage_name)}-aws-apigatewayv2-api-id"
+  type  = "String"
+  value = aws_apigatewayv2_api.fox_api.id
+}
+
 # Lambda Permissions
 
 resource "aws_lambda_permission" "fox_lambda_permission" {
