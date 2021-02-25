@@ -1,6 +1,17 @@
 #!/bin/bash -e
 
 [ -z "$XILUTION_CONFIG" ] && echo "Didn't find XILUTION_CONFIG env var." && exit 1
+[ -z "$XILUTION_ORGANIZATION_ID" ] && echo "Didn't find XILUTION_ORGANIZATION_ID env var." && exit 1
+[ -z "$GAZELLE_PIPELINE_ID" ] && echo "Didn't find GAZELLE_PIPELINE_ID env var." && exit 1
+[ -z "$FOX_PIPELINE_ID" ] && echo "Didn't find FOX_PIPELINE_ID env var." && exit 1
+[ -z "$CLIENT_AWS_ACCOUNT" ] && echo "Didn't find CLIENT_AWS_ACCOUNT env var." && exit 1
+[ -z "$CLIENT_AWS_REGION" ] && echo "Didn't find CLIENT_AWS_REGION env var." && exit 1
+[ -z "$XILUTION_AWS_ACCOUNT" ] && echo "Didn't find XILUTION_AWS_ACCOUNT env var." && exit 1
+[ -z "$XILUTION_AWS_REGION" ] && echo "Didn't find XILUTION_AWS_REGION env var." && exit 1
+[ -z "$XILUTION_ENVIRONMENT" ] && echo "Didn't find XILUTION_ENVIRONMENT env var." && exit 1
+[ -z "$PIPELINE_TYPE" ] && echo "Didn't find PIPELINE_TYPE env var." && exit 1
+[ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
+[ -z "$COMMIT_ID" ] && echo "Didn't find COMMIT_ID env var." && exit 1
 
 handler=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.handler")
 runtime=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.runtime")
@@ -20,11 +31,11 @@ cat <<EOF >./tfvars.json
   "xilution_environment": "$XILUTION_ENVIRONMENT",
   "pipeline_type": "$PIPELINE_TYPE",
   "stage_name": "$STAGE_NAME",
-  "lambda_runtime": "${runtime}",
-  "lambda_handler": "${handler}",
-  "source_version": "${sourceVersion}",
-  "public_endpoints": "${publicEndpoints}",
-  "private_endpoints": "${privateEndpoints}",
-  "jwt_authorizer": "${jwtAuthorizer}"
+  "lambda_runtime": "$runtime",
+  "lambda_handler": "$handler",
+  "source_version": "$COMMIT_ID",
+  "public_endpoints": $publicEndpoints,
+  "private_endpoints": $privateEndpoints,
+  "jwt_authorizer": $jwtAuthorizer
 }
 EOF
