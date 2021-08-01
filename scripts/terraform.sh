@@ -31,21 +31,22 @@ if [[ ! -d ${tfPath} ]]; then
   exit 0
 fi
 
+currentDir=$(pwd)
+cd ${tfPath}
+
 if [[ "${tfProvider}" == "aws" ]]; then
   if [[ "${phase}" == "trunk" ]]; then
     terraform init -no-color \
       -backend-config="key=xilution-${productCategory}-${productName}/${PIPELINE_ID}/${tfStateFileName}" \
       -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
-      -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
-      ${tfPath}
+      -backend-config="dynamodb_table=xilution-terraform-backend-lock-table"
     bash ./scripts/build-aws-trunk-terraform-vars.sh
   elif [[ "${phase}" == "stage" ]]; then
     [ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
     terraform init -no-color \
       -backend-config="key=xilution-${productCategory}-${productName}/${PIPELINE_ID}/${STAGE_NAME}/${tfStateFileName}" \
       -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
-      -backend-config="dynamodb_table=xilution-terraform-backend-lock-table" \
-      ${tfPath}
+      -backend-config="dynamodb_table=xilution-terraform-backend-lock-table"
     bash ./scripts/build-aws-stage-terraform-vars.sh
   else
     echo "Unsupported phase: ${phase}."
@@ -57,14 +58,15 @@ else
 fi
 
 if [[ "${direction}" == "up" ]]; then
-  terraform plan -no-color -var-file=tfvars.json -out=tfplan ${tfPath}
-  terraform apply -no-color tfplan
+  terraform plan -no-color -var-file=tfvars.json -out=./terraform-plan.txt
+  terraform apply -auto-approve -no-color ./terraform-plan.txt
 elif [[ "${direction}" == "down" ]]; then
-  terraform plan -no-color -destroy -var-file=tfvars.json -out=tfdestroy ${tfPath}
-  terraform apply -no-color tfdestroy
+  terraform destroy -auto-approve -no-color
 else
   echo "Unsupported direction: ${direction}."
   exit 1
 fi
+
+cd ${currentDir}
 
 echo "All Done!"

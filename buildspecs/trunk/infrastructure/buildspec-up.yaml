@@ -11,4 +11,6 @@ phases:
   build:
     commands:
       - ./scripts/terraform.sh trunk up $TERRAFORM_PATH terraform.tfstate $TERRAFORM_PROVIDER integration fox
+      - ./scripts/publish-resource-links.sh $TERRAFORM_PATH
       - ./scripts/terraform.sh trunk up $ADD_INFRA_TERRAFORM_PATH_TRUNK additional-infrastructure.tfstate $TERRAFORM_PROVIDER integration fox
+      - ./scripts/publish-resource-links.sh $ADD_INFRA_TERRAFORM_PATH_TRUNK
