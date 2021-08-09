@@ -40,14 +40,14 @@ if [[ "${tfProvider}" == "aws" ]]; then
       -backend-config="key=xilution-${productCategory}-${productName}/${PIPELINE_ID}/${tfStateFileName}" \
       -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
       -backend-config="dynamodb_table=xilution-terraform-backend-lock-table"
-    bash ./scripts/build-aws-trunk-terraform-vars.sh
+    bash "${currentDir}"/scripts/build-aws-trunk-terraform-vars.sh
   elif [[ "${phase}" == "stage" ]]; then
     [ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
     terraform init -no-color \
       -backend-config="key=xilution-${productCategory}-${productName}/${PIPELINE_ID}/${STAGE_NAME}/${tfStateFileName}" \
       -backend-config="bucket=xilution-terraform-backend-state-bucket-${CLIENT_AWS_ACCOUNT}" \
       -backend-config="dynamodb_table=xilution-terraform-backend-lock-table"
-    bash ./scripts/build-aws-stage-terraform-vars.sh
+    bash "${currentDir}"/scripts/build-aws-stage-terraform-vars.sh
   else
     echo "Unsupported phase: ${phase}."
     exit 1
