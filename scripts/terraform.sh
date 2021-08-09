@@ -61,7 +61,7 @@ if [[ "${direction}" == "up" ]]; then
   terraform plan -no-color -var-file=tfvars.json -out=./terraform-plan.txt
   terraform apply -auto-approve -no-color ./terraform-plan.txt
 elif [[ "${direction}" == "down" ]]; then
-  terraform destroy -auto-approve -no-color
+  terraform destroy -auto-approve -no-color -var-file=tfvars.json
 else
   echo "Unsupported direction: ${direction}."
   exit 1
