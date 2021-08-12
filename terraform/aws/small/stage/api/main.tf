@@ -57,6 +57,16 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
   }
 }
 
+# Public Routes
+
+module "public_api_route" {
+  count              = var.public_endpoints != null ? length(keys(var.public_endpoints)) : 0
+  source             = "./public-routes"
+  api_id             = aws_apigatewayv2_api.fox_api.id
+  api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
+  public_endpoints   = var.public_endpoints
+}
+
 # Authorizer
 
 resource "aws_apigatewayv2_authorizer" "authorizer" {
@@ -72,23 +82,13 @@ resource "aws_apigatewayv2_authorizer" "authorizer" {
   }
 }
 
-# Public Routes
-
-resource "aws_apigatewayv2_route" "public_api_route" {
-  for_each  = var.public_endpoints
-  api_id    = aws_apigatewayv2_api.fox_api.id
-  route_key = "${upper(each.value.method)} ${each.value.path}"
-  target    = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
-}
-
 # Private Routes
 
-resource "aws_apigatewayv2_route" "private_api_route" {
-  for_each             = var.private_endpoints
-  api_id               = aws_apigatewayv2_api.fox_api.id
-  route_key            = "${upper(each.value.method)} ${each.value.path}"
-  target               = "integrations/${aws_apigatewayv2_integration.fox_api_integration.id}"
-  authorization_scopes = each.value.scopes
-  authorization_type   = "JWT"
-  authorizer_id        = aws_apigatewayv2_authorizer.authorizer[0].id
+module "private_api_route" {
+  count              = var.private_endpoints != null ? length(keys(var.private_endpoints)) : 0
+  source             = "./private-routes"
+  api_id             = aws_apigatewayv2_api.fox_api.id
+  api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
+  private_endpoints  = var.private_endpoints
+  authorizer_id      = aws_apigatewayv2_authorizer.authorizer[0].id
 }
