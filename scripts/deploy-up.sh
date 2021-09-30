@@ -28,10 +28,18 @@ aws lambda update-function-configuration \
   --function-name "${functionName}" \
   --layers "${layerVersionArn}"
 
+echo "Waiting for new layer to update"
+aws lambda wait function-updated \
+  --function-name "${functionName}"
+
 echo "Updating the lambda function code"
 aws lambda update-function-code \
   --function-name "${functionName}" \
   --s3-bucket "${sourceBucket}" \
   --s3-key "${functionZipFileName}"
+
+echo "Waiting for function code to update"
+aws lambda wait function-updated \
+  --function-name "${functionName}"
 
 echo "All Done!"
