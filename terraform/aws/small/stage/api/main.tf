@@ -60,7 +60,7 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
 # Public Routes
 
 module "public_api_route" {
-  count              = var.public_endpoints != null ? length(keys(var.public_endpoints)) : 0
+  count              = var.public_endpoints != null && (length(keys(var.public_endpoints)) > 0) ? 1 : 0
   source             = "./public-routes"
   api_id             = aws_apigatewayv2_api.fox_api.id
   api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
@@ -85,7 +85,7 @@ resource "aws_apigatewayv2_authorizer" "authorizer" {
 # Private Routes
 
 module "private_api_route" {
-  count              = var.private_endpoints != null ? length(keys(var.private_endpoints)) : 0
+  count              = var.private_endpoints != null && (length(keys(var.private_endpoints)) > 0) ? 1 : 0
   source             = "./private-routes"
   api_id             = aws_apigatewayv2_api.fox_api.id
   api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
