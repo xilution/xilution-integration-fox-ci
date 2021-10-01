@@ -1,7 +1,7 @@
 locals {
   authorizer_count     = var.jwt_authorizer != null ? 1 : 0
-  public_routes_count  = ((var.public_endpoints != null) && (length(keys(var.public_endpoints)) > 0)) ? 1 : 0
-  private_routes_count = ((var.private_endpoints != null) && (length(keys(var.private_endpoints)) > 0)) ? 1 : 0
+  public_routes_count  = length(keys(coalesce(var.public_endpoints, {}))) > 0 ? 1 : 0
+  private_routes_count = length(keys(coalesce(var.private_endpoints, {}))) > 0 ? 1 : 0
 }
 
 # API
