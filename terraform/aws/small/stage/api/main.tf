@@ -1,15 +1,7 @@
 locals {
   authorizer_count = var.jwt_authorizer != null ? 1 : 0
-//  public_routes_count = (var.public_endpoints != null) && (length(keys(var.public_endpoints)) > 0) ? 1 : 0
-//  private_routes_count = (var.private_endpoints != null) && (length(keys(var.private_endpoints)) > 0) ? 1 : 0
-}
-
-output "public_endpoints" {
-  value = var.public_endpoints
-}
-
-output "private_endpoints" {
-  value = var.private_endpoints
+  public_routes_count = ((var.public_endpoints != null) && (length(keys(var.public_endpoints)) > 0)) ? 1 : 0
+  private_routes_count = ((var.public_endpoints != null) && (length(keys(var.private_endpoints)) > 0)) ? 1 : 0
 }
 
 # API
@@ -69,36 +61,36 @@ resource "aws_apigatewayv2_stage" "fox_api_stage" {
 
 # Public Routes
 
-//module "public_api_route" {
-//  count              = local.public_routes_count
-//  source             = "./public-routes"
-//  api_id             = aws_apigatewayv2_api.fox_api.id
-//  api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
-//  public_endpoints   = var.public_endpoints
-//}
+module "public_api_route" {
+  count              = local.public_routes_count
+  source             = "./public-routes"
+  api_id             = aws_apigatewayv2_api.fox_api.id
+  api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
+  public_endpoints   = var.public_endpoints
+}
 
 # Authorizer
 
-//resource "aws_apigatewayv2_authorizer" "authorizer" {
-//  count            = local.authorizer_count
-//  api_id           = aws_apigatewayv2_api.fox_api.id
-//  authorizer_type  = "JWT"
-//  identity_sources = ["$request.header.Authorization"]
-//  name             = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-authorizer"
-//
-//  jwt_configuration {
-//    audience = var.jwt_authorizer.audience
-//    issuer   = var.jwt_authorizer.issuer
-//  }
-//}
+resource "aws_apigatewayv2_authorizer" "authorizer" {
+  count            = local.authorizer_count
+  api_id           = aws_apigatewayv2_api.fox_api.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "xilution-fox-${substr(var.fox_pipeline_id, 0, 8)}-${var.stage_name}-authorizer"
+
+  jwt_configuration {
+    audience = var.jwt_authorizer.audience
+    issuer   = var.jwt_authorizer.issuer
+  }
+}
 
 # Private Routes
 
-//module "private_api_route" {
-//  count              = local.private_routes_count
-//  source             = "./private-routes"
-//  api_id             = aws_apigatewayv2_api.fox_api.id
-//  api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
-//  private_endpoints  = var.private_endpoints
-//  authorizer_id      = aws_apigatewayv2_authorizer.authorizer[0].id
-//}
+module "private_api_route" {
+  count              = local.private_routes_count
+  source             = "./private-routes"
+  api_id             = aws_apigatewayv2_api.fox_api.id
+  api_integration_id = aws_apigatewayv2_integration.fox_api_integration.id
+  private_endpoints  = var.private_endpoints
+  authorizer_id      = aws_apigatewayv2_authorizer.authorizer[0].id
+}
