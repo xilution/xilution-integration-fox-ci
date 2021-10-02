@@ -94,3 +94,13 @@ module "private_api_route" {
   private_endpoints  = var.private_endpoints
   authorizer_id      = aws_apigatewayv2_authorizer.authorizer[0].id
 }
+
+# Custom Domain
+
+module "custom_domain" {
+  count      = try(trimspace(var.domain), "") != "" ? 1 : 0
+  source     = "./custom-domain"
+  api_id     = aws_apigatewayv2_api.fox_api.id
+  domain     = var.domain
+  stage_name = var.stage_name
+}

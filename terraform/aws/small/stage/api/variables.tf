@@ -53,3 +53,8 @@ variable "jwt_authorizer" {
   description = "The JWT Authorizer"
   default     = null
 }
+
+variable "domain" {
+  type        = string
+  description = "The API Domain"
+}

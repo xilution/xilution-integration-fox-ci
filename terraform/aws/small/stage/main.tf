@@ -44,6 +44,8 @@ data "aws_subnet" "gazelle_private_subnet_2" {
   }
 }
 
+# Locals
+
 locals {
   api_count = var.public_endpoints != null ? 1 : 0 + var.private_endpoints != null ? 1 : 0
 }
@@ -104,6 +106,8 @@ resource "aws_lambda_function" "fox_lambda_function" {
   }
 }
 
+# API
+
 module "fox_api" {
   count              = local.api_count
   source             = "./api"
@@ -118,4 +122,5 @@ module "fox_api" {
   public_endpoints  = var.public_endpoints
   private_endpoints = var.private_endpoints
   jwt_authorizer    = var.jwt_authorizer
+  domain            = var.domain
 }
