@@ -12,7 +12,7 @@
 [ -z "$XILUTION_ENVIRONMENT" ] && echo "Didn't find XILUTION_ENVIRONMENT env var." && exit 1
 [ -z "$STAGE_NAME" ] && echo "Didn't find STAGE_NAME env var." && exit 1
 [ -z "$COMMIT_ID" ] && echo "Didn't find COMMIT_ID env var." && exit 1
-# [ -z "$DOMAIN" ] && echo "Didn't find DOMAIN env var." && exit 1
+[ -z "$DOMAIN" ] && echo "Didn't find DOMAIN env var." && exit 1
 
 handler=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.handler")
 runtime=$(echo "${XILUTION_CONFIG}" | base64 --decode | jq -r ".lambda.runtime")
