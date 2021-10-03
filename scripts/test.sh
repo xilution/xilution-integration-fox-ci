@@ -22,8 +22,17 @@ echo "currentDir = ${currentDir}"
 echo "xilutionConfig = ${xilutionConfig}"
 
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
+apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
 
 echo "stageNameLower = ${stageNameLower}"
+echo "apiName = ${apiName}"
+
+query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiEndpoint"
+baseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
+
+echo "baseUrl = ${baseUrl}"
+
+export API_BASE_URL=${baseUrl}
 
 cd "${sourceDir}" || false
 
