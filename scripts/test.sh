@@ -22,22 +22,14 @@ echo "currentDir = ${currentDir}"
 echo "xilutionConfig = ${xilutionConfig}"
 
 stageNameLower=$(echo "${stageName}" | tr '[:upper:]' '[:lower:]')
-apiName="xilution-fox-${pipelineId:0:8}-${stageNameLower}-api"
 
 echo "stageNameLower = ${stageNameLower}"
-echo "apiName = ${apiName}"
-
-query=".Items | map(select(.Name == \"${apiName}\")) | .[] .ApiEndpoint"
-baseUrl=$(aws apigatewayv2 get-apis | jq -r "${query}")
-
-echo "baseUrl = ${baseUrl}"
 
 cd "${sourceDir}" || false
 
 testDetails=$(echo "${xilutionConfig}" | base64 --decode | jq -r ".tests.${stageNameLower}[]? | @base64")
 
 for testDetail in ${testDetails}; do
-  wait_for_site_to_be_ready "${baseUrl}"
   testName=$(echo "${testDetail}" | base64 --decode | jq -r ".name?")
   echo "Running: ${testName}"
   commands=$(echo "${testDetail}" | base64 --decode | jq -r ".commands[]? | @base64")
